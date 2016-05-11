@@ -77,6 +77,9 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\Projects\distributed-computing\Networking;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -97,6 +100,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -121,6 +125,7 @@
   <ItemGroup>
     <ClInclude Include="ClientGame.h" />
     <ClInclude Include="ClientNetwork.h" />
+    <ClInclude Include="DirectionEnum.h" />
     <ClInclude Include="Drawing.h" />
   </ItemGroup>
   <ItemGroup>
