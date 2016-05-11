@@ -20,12 +20,18 @@
     <ClCompile Include="Client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Drawing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientNetwork.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClientGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Drawing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

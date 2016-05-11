@@ -116,10 +116,12 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ClientGame.cpp" />
     <ClCompile Include="ClientNetwork.cpp" />
+    <ClCompile Include="Drawing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientGame.h" />
     <ClInclude Include="ClientNetwork.h" />
+    <ClInclude Include="Drawing.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Networking\Networking.vcxproj">
