@@ -14,6 +14,7 @@
 
 
 #define MAX_PACKET_SIZE 1000000
+#define DEFAULT_DATA_SIZE 32
 
 
 class NETWORKING_EXPORT NetworkServices
@@ -32,6 +33,7 @@ enum NETWORKING_EXPORT PacketTypes {
 
 struct NETWORKING_EXPORT Packet {
 	unsigned int packet_type;
+	unsigned char data[DEFAULT_DATA_SIZE];
 
 	void serialize(char * data) const
 	{

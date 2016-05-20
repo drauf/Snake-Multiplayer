@@ -25,7 +25,7 @@ ClientGame::~ClientGame()
 }
 
 
-void ClientGame::sendActionPackets() const
+void ClientGame::sendActionPackets(DirectionEnum direction) const
 {
 	// send action packet
 	const unsigned int packet_size = sizeof(Packet);
@@ -33,6 +33,7 @@ void ClientGame::sendActionPackets() const
 
 	Packet packet;
 	packet.packet_type = ACTION_EVENT;
+	packet.data[0] = direction;
 
 	packet.serialize(packet_data);
 
@@ -59,15 +60,13 @@ void ClientGame::update()
 
 		switch (packet.packet_type) {
 		case INIT_CONNECTION:
-			printf("client received init packet from server\n");
-			sendActionPackets();
+			// TODO: interpret the init packet from server:
+			// force redraw, set correct player's direction
 			break;
 		case ACTION_EVENT:
-			printf("client received action event packet from server\n");
-			sendActionPackets();
+			// not yet implemented
 			break;
 		default:
-			printf("error in packet types\n");
 			break;
 		}
 	}

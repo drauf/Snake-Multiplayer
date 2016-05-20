@@ -1,6 +1,7 @@
 #pragma once
 #include "ClientNetwork.h"
 #include "Networking.h"
+#include "DirectionEnum.h"
 
 
 class ClientGame
@@ -12,6 +13,6 @@ public:
 	ClientGame();
 	~ClientGame();
 
-	void sendActionPackets() const;
+	void sendActionPackets(DirectionEnum direction) const;
 	void update();
 };

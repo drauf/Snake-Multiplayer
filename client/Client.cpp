@@ -12,11 +12,10 @@ TileTypeEnum board[MAX_X][MAX_Y];
 
 void RestartGame(HWND hWnd)
 {
-	Drawing::SetBG(hWnd);
-
-	// TODO: interpret the init packet from server:
-	// draw each players' snake, set correct player's direction
+	Drawing::RedrawWindow(hWnd, board);
 	Direction = RIGHT;
+	// clear the board array
+	memset(board, 0, sizeof(board[0][0]) * MAX_X * MAX_Y);
 }
 
 
@@ -42,19 +41,31 @@ void HandleKeyboardInput(HWND hWnd, WPARAM input)
 	switch (input) {
 	case VK_RIGHT:
 		if (Direction != LEFT)
+		{
 			Direction = RIGHT;
+			client->sendActionPackets(RIGHT);
+		}
 		break;
 	case VK_LEFT:
 		if (Direction != RIGHT)
+		{
 			Direction = LEFT;
+			client->sendActionPackets(LEFT);
+		}
 		break;
 	case VK_UP:
 		if (Direction != DOWN)
+		{
 			Direction = UP;
+			client->sendActionPackets(UP);
+		}
 		break;
 	case VK_DOWN:
 		if (Direction != UP)
+		{
 			Direction = DOWN;
+			client->sendActionPackets(DOWN);
+		}
 		break;
 	case VK_ESCAPE:
 		PostQuitMessage(0);
