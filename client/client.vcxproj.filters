@@ -37,5 +37,8 @@
     <ClInclude Include="DirectionEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TileTypeEnum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

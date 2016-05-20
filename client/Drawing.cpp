@@ -58,7 +58,7 @@ void Drawing::ClearScreen(HWND hWnd)
 }
 
 
-void Drawing::DrawSquare(HWND hWnd, int xGrid, int yGrid, int choice)
+void Drawing::DrawSquare(HWND hWnd, int xGrid, int yGrid, TileTypeEnum tile)
 {
 	PAINTSTRUCT PaintStruct;
 	HDC hdc = GetDC(hWnd);
@@ -70,12 +70,17 @@ void Drawing::DrawSquare(HWND hWnd, int xGrid, int yGrid, int choice)
 	drawPos.left = xGrid*TILESIZE + 1;
 	drawPos.right = drawPos.left + TILESIZE - 1;
 
-	// TODO: change choice from int to some nice enum
-	// TODO: add third option with background color, as a way to "delete" square
-	if (choice == 1)
+	switch (tile) {
+	case CURRENT_PLAYER:
 		FillRect(hdc, &drawPos, currentPlayersBrush);
-	else
+		break;
+	case ANOTHER_PLAYER:
 		FillRect(hdc, &drawPos, otherPlayersBrush);
+		break;
+	case EMPTY:
+		FillRect(hdc, &drawPos, backgroundBrush);
+		break;
+	}
 
 	ReleaseDC(hWnd, hdc);
 	EndPaint(hWnd, &PaintStruct);
@@ -101,13 +106,13 @@ void Drawing::DrawStatus(HWND hWnd, std::string status)
 }
 
 
-void Drawing::RedrawWindow(HWND hWnd, int board[MAX_X][MAX_Y])
+void Drawing::RedrawWindow(HWND hWnd, TileTypeEnum board[MAX_X][MAX_Y])
 {
 	SetBG(hWnd);
 	ClearScreen(hWnd);
 
 	for (int x = 0; x < MAX_X; x++)
 		for (int y = 0; y < MAX_Y; y++)
-			if (board[x][y] != 0)
+			if (board[x][y] != EMPTY)
 				DrawSquare(hWnd, x, y, board[x][y]);
 }

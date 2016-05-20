@@ -7,7 +7,7 @@
 // TODO: create lobbies
 ClientGame *client;
 DirectionEnum Direction;
-int board[MAX_X][MAX_Y];
+TileTypeEnum board[MAX_X][MAX_Y];
 
 
 void RestartGame(HWND hWnd)

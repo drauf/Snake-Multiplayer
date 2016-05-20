@@ -127,6 +127,7 @@
     <ClInclude Include="ClientNetwork.h" />
     <ClInclude Include="DirectionEnum.h" />
     <ClInclude Include="Drawing.h" />
+    <ClInclude Include="TileTypeEnum.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Networking\Networking.vcxproj">
