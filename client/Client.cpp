@@ -20,53 +20,63 @@ void RestartGame(HWND hWnd)
 }
 
 
+void HandleMenuSelection(HWND hWnd, WPARAM param)
+{
+	switch (LOWORD(param)) {
+	case ID_FILE_NEWGAME:
+		RestartGame(hWnd);
+		break;
+	case ID_LEVEL_1:
+		RestartGame(hWnd);
+		break;
+	case ID_FILE_EXIT:
+		PostQuitMessage(0);
+		break;
+	}
+}
+
+
+void HandleKeyboardInput(HWND hWnd, WPARAM input)
+{
+	// TODO: send message to server after changing direction
+	switch (input) {
+	case VK_RIGHT:
+		if (Direction != LEFT)
+			Direction = RIGHT;
+		break;
+	case VK_LEFT:
+		if (Direction != RIGHT)
+			Direction = LEFT;
+		break;
+	case VK_UP:
+		if (Direction != DOWN)
+			Direction = UP;
+		break;
+	case VK_DOWN:
+		if (Direction != UP)
+			Direction = DOWN;
+		break;
+	case VK_ESCAPE:
+		PostQuitMessage(0);
+		break;
+	}
+}
+
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg) {
 	case WM_KEYDOWN: // handle keyboard input
-		// TODO: send message to server after changing direction
-		// TODO: move this code section to a separate function
-		switch (wParam) {
-		case VK_RIGHT:
-			if (Direction != LEFT)
-				Direction = RIGHT;
-			break;
-		case VK_LEFT:
-			if (Direction != RIGHT)
-				Direction = LEFT;
-			break;
-		case VK_UP:
-			if (Direction != DOWN)
-				Direction = UP;
-			break;
-		case VK_DOWN:
-			if (Direction != UP)
-				Direction = DOWN;
-			break;
-		case VK_ESCAPE:
-			PostQuitMessage(0);
-			break;
-		}
+		HandleKeyboardInput(hWnd, wParam);
 		break;
-	case WM_PAINT:
+	case WM_PAINT: // redraw window
 		Drawing::RedrawWindow(hWnd, board);
 		break;
 	case WM_COMMAND: // handle menu selection 
-		// TODO: move this to a separate function
-		switch (LOWORD(wParam)) {
-		case ID_FILE_NEWGAME:
-			RestartGame(hWnd);
-			break;
-		case ID_LEVEL_1:
-			RestartGame(hWnd);
-			break;
-		case ID_FILE_EXIT:
-			PostQuitMessage(0);
-			break;
-		}
+		HandleMenuSelection(hWnd, wParam);
 		break;
-	case WM_CREATE:
-		Drawing::Init(hWnd); // create game window
+	case WM_CREATE: // create window
+		Drawing::Init(hWnd);
 		RestartGame(hWnd);
 		break;
 	case WM_DESTROY:
