@@ -99,3 +99,15 @@ void Drawing::DrawStatus(HWND hWnd, std::string status)
 	ReleaseDC(hWnd, hdc);
 	EndPaint(hWnd, &PaintStruct);
 }
+
+
+void Drawing::RedrawWindow(HWND hWnd, int board[MAX_X][MAX_Y])
+{
+	SetBG(hWnd);
+	ClearScreen(hWnd);
+
+	for (int x = 0; x < MAX_X; x++)
+		for (int y = 0; y < MAX_Y; y++)
+			if (board[x][y] != 0)
+				DrawSquare(hWnd, x, y, board[x][y]);
+}

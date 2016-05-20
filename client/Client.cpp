@@ -7,6 +7,7 @@
 // TODO: create lobbies
 ClientGame *client;
 DirectionEnum Direction;
+int board[MAX_X][MAX_Y];
 
 
 void RestartGame(HWND hWnd)
@@ -48,8 +49,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_PAINT:
-		// TODO: create Redraw function
-		Drawing::SetBG(hWnd);
+		Drawing::RedrawWindow(hWnd, board);
 		break;
 	case WM_COMMAND: // handle menu selection 
 		// TODO: move this to a separate function
