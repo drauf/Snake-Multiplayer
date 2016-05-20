@@ -9,7 +9,7 @@
 #define WINDOWSIZE_Y 800
 // game board size in tiles
 #define MAX_X 64
-#define MAX_Y 48
+#define MAX_Y 46
 // tile size in pixels
 #define TILESIZE 15
 // menu event IDs

@@ -2,7 +2,7 @@
 
 
 RECT Drawing::statusArea = { 10, 5, 200, 30 }; // status text area
-RECT Drawing::gameArea = { 10, 30, 970, 730 }; // main game area
+RECT Drawing::gameArea = { 10, 37, 971, 728 }; // main game area
 
 const HBRUSH Drawing::currentPlayersBrush = CreateSolidBrush(RGB(80, 180, 80)); // green
 const HBRUSH Drawing::otherPlayersBrush = CreateSolidBrush(RGB(50, 40, 20)); // black
@@ -65,9 +65,9 @@ void Drawing::DrawSquare(HWND hWnd, int xGrid, int yGrid, TileTypeEnum tile)
 
 	// calculate positions for the square, add/substract 1 to leave a small gap between squares
 	static RECT drawPos;
-	drawPos.top = yGrid*TILESIZE + 1;
+	drawPos.top = (yGrid + 2)*TILESIZE + 8;
 	drawPos.bottom = drawPos.top + TILESIZE - 1;
-	drawPos.left = xGrid*TILESIZE + 1;
+	drawPos.left = xGrid*TILESIZE + 11;
 	drawPos.right = drawPos.left + TILESIZE - 1;
 
 	switch (tile) {
