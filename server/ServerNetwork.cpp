@@ -1,6 +1,41 @@
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <ws2tcpip.h>
 #include "ServerNetwork.h"
 #include "Networking.h"
+
+
+void printServerAddress(char *port)
+{
+	char szBuffer[1024];
+
+	WSADATA wsaData;
+	WORD wVersionRequested = MAKEWORD(2, 0);
+	if (WSAStartup(wVersionRequested, &wsaData) != 0)
+		return;
+
+	if (gethostname(szBuffer, sizeof(szBuffer)) == SOCKET_ERROR)
+	{
+		WSACleanup();
+		return;
+	}
+
+	hostent *host = gethostbyname(szBuffer);
+	if (host == nullptr)
+	{
+		WSACleanup();
+		return;
+	}
+
+	//Obtain the computer's IP
+	auto b1 = reinterpret_cast<struct in_addr *>((host->h_addr))->S_un.S_un_b.s_b1;
+	auto b2 = reinterpret_cast<struct in_addr *>((host->h_addr))->S_un.S_un_b.s_b2;
+	auto b3 = reinterpret_cast<struct in_addr *>((host->h_addr))->S_un.S_un_b.s_b3;
+	auto b4 = reinterpret_cast<struct in_addr *>((host->h_addr))->S_un.S_un_b.s_b4;
+
+	printf("IP: %d.%d.%d.%d:%s\n", b1, b2, b3, b4, port);
+
+	WSACleanup();
+}
 
 
 ServerNetwork::ServerNetwork(char *port)
@@ -34,6 +69,9 @@ ServerNetwork::ServerNetwork(char *port)
 		WSACleanup();
 		exit(1);
 	}
+
+	// print server address and port
+	printServerAddress(port);
 
 	// create a socket for connecting to server
 	ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
