@@ -40,28 +40,28 @@ void HandleKeyboardInput(HWND hWnd, WPARAM input)
 	// TODO: send message to server after changing direction
 	switch (input) {
 	case VK_RIGHT:
-		if (Direction != LEFT)
+		if (Direction != LEFT && Direction != RIGHT)
 		{
 			Direction = RIGHT;
 			client->sendActionPackets(RIGHT);
 		}
 		break;
 	case VK_LEFT:
-		if (Direction != RIGHT)
+		if (Direction != LEFT && Direction != RIGHT)
 		{
 			Direction = LEFT;
 			client->sendActionPackets(LEFT);
 		}
 		break;
 	case VK_UP:
-		if (Direction != DOWN)
+		if (Direction != UP && Direction != DOWN)
 		{
 			Direction = UP;
 			client->sendActionPackets(UP);
 		}
 		break;
 	case VK_DOWN:
-		if (Direction != UP)
+		if (Direction != UP && Direction != DOWN)
 		{
 			Direction = DOWN;
 			client->sendActionPackets(DOWN);
