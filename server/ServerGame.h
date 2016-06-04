@@ -10,7 +10,7 @@ class ServerGame
 	char network_data[MAX_PACKET_SIZE]; // data buffer
 
 public:
-	ServerGame();
+	explicit ServerGame(char *port);
 	~ServerGame();
 
 	void update();

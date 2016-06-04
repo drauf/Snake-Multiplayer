@@ -13,8 +13,9 @@ void serverLoop()
 }
 
 
-int main()
+int main(int argc, char *argv[])
 {
-	server = new ServerGame();
+	if (argc < 2) server = new ServerGame("27015");
+	else server = new ServerGame(argv[1]);
 	serverLoop();
 }

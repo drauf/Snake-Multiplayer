@@ -5,7 +5,6 @@
 
 
 #define DEFAULT_BUFLEN 512 // size of the buffer
-#define DEFAULT_PORT "27015" // port to connect sockets through 
 
 
 class ServerNetwork
@@ -17,7 +16,7 @@ class ServerNetwork
 public:
 	std::map<unsigned int, SOCKET> sessions; // table to keep track of each client's socket
 
-	ServerNetwork(void);
+	explicit ServerNetwork(char *port);
 	~ServerNetwork(void);
 
 	bool acceptNewClient(unsigned int &id);

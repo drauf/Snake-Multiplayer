@@ -3,7 +3,7 @@
 #include "Networking.h"
 
 
-ServerNetwork::ServerNetwork(void)
+ServerNetwork::ServerNetwork(char *port)
 {
 	WSADATA wsaData;
 	ListenSocket = INVALID_SOCKET;
@@ -26,7 +26,7 @@ ServerNetwork::ServerNetwork(void)
 	hints.ai_flags = AI_PASSIVE;
 
 	// resolve the server address and port
-	iResult = getaddrinfo(nullptr, DEFAULT_PORT, &hints, &result);
+	iResult = getaddrinfo(nullptr, port, &hints, &result);
 
 	if (iResult != 0)
 	{

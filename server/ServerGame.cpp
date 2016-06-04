@@ -4,9 +4,9 @@
 unsigned int ServerGame::client_id;
 
 
-ServerGame::ServerGame()
+ServerGame::ServerGame(char *port)
 {
-	network = new ServerNetwork();
+	network = new ServerNetwork(port);
 }
 
 
