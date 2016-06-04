@@ -4,7 +4,7 @@
 #include "Networking.h"
 
 
-ClientNetwork::ClientNetwork()
+ClientNetwork::ClientNetwork(char *ip, char *port)
 {
 	WSADATA wsaData;
 	ConnectSocket = INVALID_SOCKET;
@@ -26,7 +26,7 @@ ClientNetwork::ClientNetwork()
 	hints.ai_protocol = IPPROTO_TCP;  // TCP connection
 
 	// resolve server address and port 
-	iResult = getaddrinfo("127.0.0.1", DEFAULT_PORT, &hints, &result);
+	iResult = getaddrinfo(ip, port, &hints, &result);
 
 	if (iResult != 0)
 	{

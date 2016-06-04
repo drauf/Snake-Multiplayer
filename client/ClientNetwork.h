@@ -6,7 +6,6 @@
 
 
 #define DEFAULT_BUFLEN 512 // size of the buffer
-#define DEFAULT_PORT "27015" // port to connect sockets through 
 
 
 class ClientNetwork
@@ -16,7 +15,7 @@ class ClientNetwork
 public:
 	SOCKET ConnectSocket; // socket for client to connect to server
 
-	ClientNetwork();
+	ClientNetwork(char *ip, char *port);
 	~ClientNetwork();
 
 	int receivePackets(char *);

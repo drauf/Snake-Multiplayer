@@ -15,7 +15,6 @@
 // menu event IDs
 #define ID_FILE_NEWGAME 9001
 #define ID_FILE_EXIT 9002
-#define ID_LEVEL_1 9003
 
 
 class Drawing

@@ -3,9 +3,9 @@
 #include "Networking.h"
 
 
-ClientGame::ClientGame()
+ClientGame::ClientGame(char *ip, char *port)
 {
-	network = new ClientNetwork();
+	network = new ClientNetwork(ip, port);
 
 	// send initial packet
 	const unsigned int packet_size = sizeof(Packet);

@@ -24,10 +24,6 @@ void Drawing::Init(HWND hWnd)
 	AppendMenu(hSubMenu, MF_STRING, ID_FILE_EXIT, "&Exit");
 	AppendMenu(hMenu, MF_STRING | MF_POPUP, UINT(hSubMenu), "&File");
 
-	hSubMenu = CreatePopupMenu();
-	AppendMenu(hSubMenu, MF_STRING, ID_LEVEL_1, "&1");
-	AppendMenu(hMenu, MF_STRING | MF_POPUP, UINT(hSubMenu), "&Level");
-
 	SetMenu(hWnd, hMenu);
 }
 

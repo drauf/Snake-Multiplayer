@@ -10,7 +10,7 @@ class ClientGame
 	char network_data[MAX_PACKET_SIZE]; // data buffer
 
 public:
-	ClientGame();
+	ClientGame(char *ip, char *port);
 	~ClientGame();
 
 	void sendActionPackets(DirectionEnum direction) const;

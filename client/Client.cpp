@@ -3,8 +3,6 @@
 #include "DirectionEnum.h"
 
 
-// TODO: enable selecting server's IP and PORT
-// TODO: create lobbies
 ClientGame *client;
 DirectionEnum Direction;
 TileTypeEnum board[MAX_X][MAX_Y];
@@ -16,6 +14,11 @@ void RestartGame(HWND hWnd)
 	Direction = RIGHT;
 	// clear the board array
 	memset(board, 0, sizeof(board[0][0]) * MAX_X * MAX_Y);
+	// get server's address from user
+	// TODO: prompt user to get that info
+	char *ip = "localhost";
+	char *port = "27015";
+	client = new ClientGame(ip, port);
 }
 
 
@@ -23,9 +26,6 @@ void HandleMenuSelection(HWND hWnd, WPARAM param)
 {
 	switch (LOWORD(param)) {
 	case ID_FILE_NEWGAME:
-		RestartGame(hWnd);
-		break;
-	case ID_LEVEL_1:
 		RestartGame(hWnd);
 		break;
 	case ID_FILE_EXIT:
@@ -37,7 +37,6 @@ void HandleMenuSelection(HWND hWnd, WPARAM param)
 
 void HandleKeyboardInput(HWND hWnd, WPARAM input)
 {
-	// TODO: send message to server after changing direction
 	switch (input) {
 	case VK_RIGHT:
 		if (Direction != LEFT && Direction != RIGHT)
@@ -88,7 +87,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_CREATE: // create window
 		Drawing::Init(hWnd);
-		RestartGame(hWnd);
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
@@ -101,8 +99,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, INT nShowCmd)
 {
-	client = new ClientGame();
 	MSG msg;
+	client = nullptr;
 
 	WNDCLASSEX wc = { sizeof(WNDCLASSEX), 0, WndProc, 0, 0, hInstance, nullptr,
 		nullptr, HBRUSH(COLOR_WINDOW + 1), nullptr, "wndClass", nullptr };
@@ -129,7 +127,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// enter the message loop - listen for events and then send them to WndProc()
 	while (GetMessage(&msg, nullptr, 0, 0) > 0)
 	{
-		client->update();
+		if (client != nullptr) client->update();
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
