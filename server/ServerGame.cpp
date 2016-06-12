@@ -7,6 +7,17 @@ unsigned int ServerGame::client_id;
 ServerGame::ServerGame(char *port)
 {
 	network = new ServerNetwork(port);
+
+	for (int i = 0; i < MAX_PLAYERS; i++)
+	{
+		Player p = Player(i + 1, RIGHT, Position(0, i));
+
+#ifdef _DEBUG
+		printf("Created player %d with direction %d and position (%d, %d)\n", p.id, p.direction, p.positions[0].x, p.positions[0].y);
+#endif
+
+		players[i] = p;
+	}
 }
 
 
