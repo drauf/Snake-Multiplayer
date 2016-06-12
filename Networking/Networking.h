@@ -35,7 +35,7 @@ enum NETWORKING_EXPORT PacketTypes {
 
 struct NETWORKING_EXPORT Packet {
 	unsigned int packet_type;
-	unsigned char data[DEFAULT_DATA_SIZE];
+	char data[DEFAULT_DATA_SIZE];
 
 	void serialize(char * data) const
 	{

@@ -1,5 +1,4 @@
 #include "ClientGame.h"
-#include "Drawing.h"
 #include "DirectionEnum.h"
 
 
@@ -15,7 +14,7 @@ void RestartGame(HWND hWnd)
 
 	char *ip = "localhost";
 	char *port = "27015";
-	client = new ClientGame(ip, port);
+	client = new ClientGame(ip, port, hWnd);
 }
 
 
@@ -108,7 +107,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// enter the message loop - listen for events and then send them to WndProc()
 	while (GetMessage(&msg, nullptr, 0, 0) > 0)
 	{
-		if (client != nullptr) client->update();
+		if (client != nullptr) client->update(board);
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
