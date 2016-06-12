@@ -22,5 +22,6 @@ public:
 	bool acceptNewClient(unsigned int &id);
 	int receiveData(unsigned int client_id, char *recvbuf);
 	void sendToOne(unsigned int id, char *packets, int totalSize);
+	void sendToAllButOne(unsigned int id, char *packets, int totalSize);
 	void sendToAll(char *packets, int totalSize);
 };

@@ -184,6 +184,28 @@ void ServerNetwork::sendToOne(unsigned int id, char* packets, int totalSize)
 }
 
 
+void ServerNetwork::sendToAllButOne(unsigned id, char* packets, int totalSize)
+{
+	SOCKET currentSocket;
+	std::map<unsigned int, SOCKET>::iterator iter;
+	int iSendResult;
+
+	for (iter = sessions.begin(); iter != sessions.end(); ++iter)
+	{
+		if (iter->first == id) continue;
+
+		currentSocket = iter->second;
+		iSendResult = NetworkServices::sendMessage(currentSocket, packets, totalSize);
+
+		if (iSendResult == SOCKET_ERROR)
+		{
+			printf("send failed with error: %d\n", WSAGetLastError());
+			closesocket(currentSocket);
+		}
+	}
+}
+
+
 void ServerNetwork::sendToAll(char *packets, int totalSize)
 {
 	SOCKET currentSocket;

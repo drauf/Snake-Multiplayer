@@ -30,6 +30,10 @@ public:
 
 private:
 	void initializePlayer(unsigned char id);
+
 	void sendInitialPacket(unsigned char id) const;
+	void sendNewPlayerPacket(unsigned char id) const;
+
 	void createInitialPacket(unsigned char id, char packet_data[]) const;
+	void createNewPlayerPacket(unsigned char id, char packet_data[]) const;
 };

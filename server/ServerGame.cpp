@@ -23,6 +23,7 @@ void ServerGame::update()
 		printf("client %d has connected to the server\n", ++player_count);
 		initializePlayer(player_count);
 		sendInitialPacket(player_count);
+		sendNewPlayerPacket(player_count);
 	}
 
 	receiveFromClients();
@@ -115,6 +116,20 @@ void ServerGame::sendInitialPacket(unsigned char id) const
 }
 
 
+void ServerGame::sendNewPlayerPacket(unsigned char id) const
+{
+	const unsigned int packet_size = sizeof(Packet);
+	char packet_data[packet_size];
+
+	createNewPlayerPacket(id, packet_data);
+
+	Packet packet;
+	packet.packet_type = INIT_PACKET;
+	packet.serialize(packet_data);
+	network->sendToAllButOne(id, packet_data, packet_size);
+}
+
+
 void ServerGame::createInitialPacket(unsigned char id, char packet_data[]) const
 {
 	int index = 0;
@@ -129,13 +144,24 @@ void ServerGame::createInitialPacket(unsigned char id, char packet_data[]) const
 		packet_data[index++] = players[i].positions[0].y;
 	}
 
-	// add two -1s at the end for easie parsing on client side
+	// add two -1s at the end for easier parsing on client side
 	packet_data[index + 1] = packet_data[index] = -1;
 
 #ifdef _DEBUG
-	printf("Created initial packet to client %d:\n", id);
+	printf("Created initial packet for client %d:\n", id);
 	for (unsigned int i = 0; i < (1 + player_count) * 3; i++)
 		printf("%d,", packet_data[i]);
 	printf("\n");
+#endif
+}
+
+
+void ServerGame::createNewPlayerPacket(unsigned char id, char packet_data[]) const
+{
+	packet_data[0] = players[id - 1].positions[0].x;
+	packet_data[1] = players[id - 1].positions[0].y;
+	
+#ifdef _DEBUG
+	printf("Created new player packet: %d, %d\n", packet_data[0], packet_data[1]);
 #endif
 }
