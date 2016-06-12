@@ -27,4 +27,7 @@ public:
 	void update();
 	void receiveFromClients();
 	void sendActionPackets() const;
+
+private:
+	void initializePlayer(unsigned char id);
 };
