@@ -6,17 +6,6 @@
 ClientGame::ClientGame(char *ip, char *port)
 {
 	network = new ClientNetwork(ip, port);
-
-	// send initial packet
-	const unsigned int packet_size = sizeof(Packet);
-	char packet_data[packet_size];
-
-	Packet packet;
-	packet.packet_type = INIT_CONNECTION;
-
-	packet.serialize(packet_data);
-
-	NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
 }
 
 
@@ -25,7 +14,7 @@ ClientGame::~ClientGame()
 }
 
 
-void ClientGame::sendActionPackets(DirectionEnum direction) const
+void ClientGame::sendActionPacket(DirectionEnum direction) const
 {
 	// send action packet
 	const unsigned int packet_size = sizeof(Packet);

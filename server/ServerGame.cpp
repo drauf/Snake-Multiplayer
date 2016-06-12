@@ -52,13 +52,11 @@ void ServerGame::receiveFromClients()
 			i += sizeof(Packet);
 
 			switch (packet.packet_type) {
-			case INIT_CONNECTION:
-				printf("server received init packet from client\n");
-				sendActionPackets();
-				break;
 			case ACTION_EVENT:
-				printf("server received action event packet from client\n");
-				sendActionPackets();
+				players[iter->first - 1].direction = DirectionEnum(network_data[4]);
+				#ifdef _DEBUG
+					printf("client %d changed direction to %d\n", iter->first, network_data[4]);
+				#endif
 				break;
 			default:
 				printf("error in packet types\n");
@@ -66,21 +64,6 @@ void ServerGame::receiveFromClients()
 			}
 		}
 	}
-}
-
-
-void ServerGame::sendActionPackets() const
-{
-	// send action packet
-	const unsigned int packet_size = sizeof(Packet);
-	char packet_data[packet_size];
-
-	Packet packet;
-	packet.packet_type = ACTION_EVENT;
-
-	packet.serialize(packet_data);
-
-	network->sendToAll(packet_data, packet_size);
 }
 
 
@@ -93,9 +76,9 @@ void ServerGame::initializePlayer(unsigned char id)
 
 	Player p = Player(id, dir, Position(x, y));
 
-#ifdef _DEBUG
-	printf("Created player %d with direction %d and position (%d, %d)\n", p.id, p.direction, p.positions[0].x, p.positions[0].y);
-#endif
+	#ifdef _DEBUG
+		printf("Created player %d with direction %d and position (%d, %d)\n", p.id, p.direction, p.positions[0].x, p.positions[0].y);
+	#endif
 
 	players[id - 1] = p;
 	board[x][y] = true;
@@ -147,12 +130,12 @@ void ServerGame::createInitialPacket(unsigned char id, char packet_data[]) const
 	// add two -1s at the end for easier parsing on client side
 	packet_data[index + 1] = packet_data[index] = -1;
 
-#ifdef _DEBUG
-	printf("Created initial packet for client %d:\n", id);
-	for (unsigned int i = 0; i < (1 + player_count) * 3; i++)
-		printf("%d,", packet_data[i]);
-	printf("\n");
-#endif
+	#ifdef _DEBUG
+		printf("Created initial packet for client %d:\n", id);
+		for (unsigned int i = 0; i < (1 + player_count) * 3; i++)
+			printf("%d,", packet_data[i]);
+		printf("\n");
+	#endif
 }
 
 
@@ -160,8 +143,8 @@ void ServerGame::createNewPlayerPacket(unsigned char id, char packet_data[]) con
 {
 	packet_data[0] = players[id - 1].positions[0].x;
 	packet_data[1] = players[id - 1].positions[0].y;
-	
-#ifdef _DEBUG
-	printf("Created new player packet: %d, %d\n", packet_data[0], packet_data[1]);
-#endif
+
+	#ifdef _DEBUG
+		printf("Created new player packet: %d, %d\n", packet_data[0], packet_data[1]);
+	#endif
 }

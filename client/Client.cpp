@@ -42,28 +42,28 @@ void HandleKeyboardInput(HWND hWnd, WPARAM input)
 		if (Direction != LEFT && Direction != RIGHT)
 		{
 			Direction = RIGHT;
-			client->sendActionPackets(RIGHT);
+			client->sendActionPacket(RIGHT);
 		}
 		break;
 	case VK_LEFT:
 		if (Direction != LEFT && Direction != RIGHT)
 		{
 			Direction = LEFT;
-			client->sendActionPackets(LEFT);
+			client->sendActionPacket(LEFT);
 		}
 		break;
 	case VK_UP:
 		if (Direction != UP && Direction != DOWN)
 		{
 			Direction = UP;
-			client->sendActionPackets(UP);
+			client->sendActionPacket(UP);
 		}
 		break;
 	case VK_DOWN:
 		if (Direction != UP && Direction != DOWN)
 		{
 			Direction = DOWN;
-			client->sendActionPackets(DOWN);
+			client->sendActionPacket(DOWN);
 		}
 		break;
 	case VK_ESCAPE:

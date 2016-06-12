@@ -13,6 +13,6 @@ public:
 	ClientGame(char *ip, char *port);
 	~ClientGame();
 
-	void sendActionPackets(DirectionEnum direction) const;
+	void sendActionPacket(DirectionEnum direction) const;
 	void update();
 };
