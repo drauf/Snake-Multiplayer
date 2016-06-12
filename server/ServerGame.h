@@ -1,4 +1,5 @@
 #pragma once
+#include <ctime>
 #include "ServerNetwork.h"
 #include "Networking.h"
 #include "Player.h"

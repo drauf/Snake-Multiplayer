@@ -10,13 +10,19 @@ ServerGame::ServerGame(char *port)
 
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
-		Player p = Player(i + 1, RIGHT, Position(0, i));
+		auto dir = DirectionEnum(rand() % LEFT);
+		unsigned char x = MAX_X / 5 + rand() % MAX_X / 5 + 2 * (i % 2) * MAX_X / 5;
+		unsigned char y = MAX_Y / 5 + rand() % MAX_Y / 5;
+		if (i > 1) y += 2 * MAX_Y / 5;
+
+		Player p = Player(i + 1, dir, Position(x, y));
 
 #ifdef _DEBUG
 		printf("Created player %d with direction %d and position (%d, %d)\n", p.id, p.direction, p.positions[0].x, p.positions[0].y);
 #endif
 
 		players[i] = p;
+		board[x][y] = true;
 	}
 }
 
