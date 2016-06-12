@@ -27,7 +27,8 @@ public:
 
 enum NETWORKING_EXPORT PacketTypes {
 	INIT_CONNECTION = 0,
-	ACTION_EVENT = 1,
+	INIT_PACKET = 1,
+	ACTION_EVENT = 2,
 };
 
 

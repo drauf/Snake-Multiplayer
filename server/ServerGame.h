@@ -14,7 +14,7 @@
 class ServerGame
 {
 	ServerNetwork* network;
-	static unsigned int client_id; // IDs for the clients connecting
+	static unsigned int player_count;
 	char network_data[MAX_PACKET_SIZE]; // data buffer
 
 	Player players[MAX_PLAYERS];
@@ -30,4 +30,6 @@ public:
 
 private:
 	void initializePlayer(unsigned char id);
+	void sendInitialPacket(unsigned char id) const;
+	void createInitialPacket(unsigned char id, char packet_data[]) const;
 };

@@ -141,7 +141,7 @@ bool ServerNetwork::acceptNewClient(unsigned int &id)
 		setsockopt(ClientSocket, IPPROTO_TCP, TCP_NODELAY, &value, sizeof(value));
 
 		// save new client's in session id table
-		sessions.insert(std::pair<unsigned int, SOCKET>(id, ClientSocket));
+		sessions.insert(std::pair<unsigned int, SOCKET>(id + 1, ClientSocket));
 
 		return true;
 	}
@@ -167,6 +167,20 @@ int ServerNetwork::receiveData(unsigned int client_id, char *recvbuf)
 	}
 
 	return 0;
+}
+
+
+void ServerNetwork::sendToOne(unsigned int id, char* packets, int totalSize)
+{
+	SOCKET socket = sessions.at(id);
+
+	int iSendResult = NetworkServices::sendMessage(socket, packets, totalSize);
+
+	if (iSendResult == SOCKET_ERROR)
+	{
+		printf("send failed with error: %d\n", WSAGetLastError());
+		closesocket(socket);
+	}
 }
 
 

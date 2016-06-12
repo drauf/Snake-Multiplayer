@@ -1,7 +1,7 @@
 #include "ServerGame.h"
 
 
-unsigned int ServerGame::client_id;
+unsigned int ServerGame::player_count;
 
 
 ServerGame::ServerGame(char *port)
@@ -18,10 +18,11 @@ ServerGame::~ServerGame()
 void ServerGame::update()
 {
 	// get new clients
-	if (client_id < MAX_PLAYERS && network->acceptNewClient(client_id))
+	if (player_count < MAX_PLAYERS && network->acceptNewClient(player_count))
 	{
-		printf("client %d has connected to the server\n", ++client_id);
-		initializePlayer(client_id);
+		printf("client %d has connected to the server\n", ++player_count);
+		initializePlayer(player_count);
+		sendInitialPacket(player_count);
 	}
 
 	receiveFromClients();
@@ -95,6 +96,46 @@ void ServerGame::initializePlayer(unsigned char id)
 	printf("Created player %d with direction %d and position (%d, %d)\n", p.id, p.direction, p.positions[0].x, p.positions[0].y);
 #endif
 
-	players[id] = p;
+	players[id - 1] = p;
 	board[x][y] = true;
+}
+
+
+void ServerGame::sendInitialPacket(unsigned char id) const
+{
+	const unsigned int packet_size = sizeof(Packet);
+	char packet_data[packet_size];
+
+	createInitialPacket(id, packet_data);
+
+	Packet packet;
+	packet.packet_type = INIT_PACKET;
+	packet.serialize(packet_data);
+	network->sendToOne(id, packet_data, packet_size);
+}
+
+
+void ServerGame::createInitialPacket(unsigned char id, char packet_data[]) const
+{
+	int index = 0;
+
+	packet_data[index++] = id; // first bit -> player's id
+
+	// store data about every player's position
+	for (unsigned int i = 0; i < player_count; i++)
+	{
+		packet_data[index++] = players[i].id;
+		packet_data[index++] = players[i].positions[0].x;
+		packet_data[index++] = players[i].positions[0].y;
+	}
+
+	// add two -1s at the end for easie parsing on client side
+	packet_data[index + 1] = packet_data[index] = -1;
+
+#ifdef _DEBUG
+	printf("Created initial packet to client %d:\n", id);
+	for (unsigned int i = 0; i < (1 + player_count) * 3; i++)
+		printf("%d,", packet_data[i]);
+	printf("\n");
+#endif
 }
