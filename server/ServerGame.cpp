@@ -120,10 +120,10 @@ void ServerGame::sendInitialPacket(unsigned char id) const
 	const unsigned int packet_size = sizeof(Packet);
 	char packet_data[packet_size];
 
-	createInitialPacket(id, packet_data);
-
 	Packet packet;
 	packet.packet_type = INIT_PACKET;
+	createInitialPacket(id, packet.data);
+
 	packet.serialize(packet_data);
 	network->sendToOne(id, packet_data, packet_size);
 }
@@ -134,10 +134,11 @@ void ServerGame::sendNewPlayerPacket(unsigned char id) const
 	const unsigned int packet_size = sizeof(Packet);
 	char packet_data[packet_size];
 
-	createNewPlayerPacket(id, packet_data);
 
 	Packet packet;
-	packet.packet_type = INIT_PACKET;
+	packet.packet_type = NEW_PLAYER_CONNECTED;
+	createNewPlayerPacket(id, packet.data);
+
 	packet.serialize(packet_data);
 	network->sendToAllButOne(id, packet_data, packet_size);
 }
