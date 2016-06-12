@@ -53,10 +53,7 @@ void ServerGame::receiveFromClients()
 
 			switch (packet.packet_type) {
 			case ACTION_EVENT:
-				players[iter->first - 1].direction = DirectionEnum(network_data[4]);
-				#ifdef _DEBUG
-					printf("client %d changed direction to %d\n", iter->first, network_data[4]);
-				#endif
+				handleActionPacket(iter->first - 1, network_data[4]);
 				break;
 			default:
 				printf("error in packet types\n");
@@ -64,6 +61,39 @@ void ServerGame::receiveFromClients()
 			}
 		}
 	}
+}
+
+
+void ServerGame::handleActionPacket(unsigned char id, int direction)
+{
+	auto prevDirection = players[id].direction;
+	auto curDirection = DirectionEnum(direction);
+
+	if (prevDirection == curDirection) return;
+
+	switch (curDirection)
+	{
+	case UP:
+		if (prevDirection == DOWN) return;
+		break;
+	case RIGHT:
+		if (prevDirection == LEFT) return;
+		break;
+	case DOWN:
+		if (prevDirection == UP) return;
+		break;
+	case LEFT:
+		if (prevDirection == RIGHT) return;
+		break;
+	default:
+		break;
+	}
+
+	players[id].direction = curDirection;
+
+#ifdef _DEBUG
+	printf("client %d changed direction to %d\n", id + 1, curDirection);
+#endif
 }
 
 

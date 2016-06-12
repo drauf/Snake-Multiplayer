@@ -28,6 +28,8 @@ public:
 	void receiveFromClients();
 
 private:
+	void handleActionPacket(unsigned char id, int direction);
+
 	void initializePlayer(unsigned char id);
 
 	void sendInitialPacket(unsigned char id) const;

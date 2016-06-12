@@ -4,18 +4,15 @@
 
 
 ClientGame *client;
-DirectionEnum Direction;
 TileTypeEnum board[MAX_X][MAX_Y];
 
 
 void RestartGame(HWND hWnd)
 {
 	Drawing::RedrawWindow(hWnd, board);
-	Direction = RIGHT;
 	// clear the board array
 	memset(board, 0, sizeof(board[0][0]) * MAX_X * MAX_Y);
-	// get server's address from user
-	// TODO: prompt user to get that info
+
 	char *ip = "localhost";
 	char *port = "27015";
 	client = new ClientGame(ip, port);
@@ -39,32 +36,16 @@ void HandleKeyboardInput(HWND hWnd, WPARAM input)
 {
 	switch (input) {
 	case VK_RIGHT:
-		if (Direction != LEFT && Direction != RIGHT)
-		{
-			Direction = RIGHT;
-			client->sendActionPacket(RIGHT);
-		}
+		client->sendActionPacket(RIGHT);
 		break;
 	case VK_LEFT:
-		if (Direction != LEFT && Direction != RIGHT)
-		{
-			Direction = LEFT;
-			client->sendActionPacket(LEFT);
-		}
+		client->sendActionPacket(LEFT);
 		break;
 	case VK_UP:
-		if (Direction != UP && Direction != DOWN)
-		{
-			Direction = UP;
-			client->sendActionPacket(UP);
-		}
+		client->sendActionPacket(UP);
 		break;
 	case VK_DOWN:
-		if (Direction != UP && Direction != DOWN)
-		{
-			Direction = DOWN;
-			client->sendActionPacket(DOWN);
-		}
+		client->sendActionPacket(DOWN);
 		break;
 	case VK_ESCAPE:
 		PostQuitMessage(0);
