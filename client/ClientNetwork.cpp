@@ -3,6 +3,19 @@
 #include "ClientNetwork.h"
 #include "Networking.h"
 
+void ClientNetwork::displayError(char* message, int errorCode)
+{
+	if (errorCode != 0)
+	{
+		std::string s = std::to_string(errorCode);
+		char const *pchar = s.c_str();
+		char *result = new char[100];
+		strcpy_s(result, 100, message);
+		strcat_s(result, 100, pchar);
+		message = result;
+	}
+	MessageBox(NULL, message, "Error", MB_OK);
+}
 
 ClientNetwork::ClientNetwork(char *ip, char *port)
 {
@@ -13,10 +26,9 @@ ClientNetwork::ClientNetwork(char *ip, char *port)
 	// initialize Winsock
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-	if (iResult != 0) 
+	if (iResult != 0)
 	{
-		printf("WSAStartup failed with error: %d\n", iResult);
-		exit(1);
+		displayError("WSAStartup failed with error: \n", iResult);
 	}
 
 	// set address info
@@ -26,17 +38,16 @@ ClientNetwork::ClientNetwork(char *ip, char *port)
 	hints.ai_protocol = IPPROTO_TCP;  // TCP connection
 
 	// resolve server address and port 
-	iResult = getaddrinfo(ip, port, &hints, &result);
+	iResult = getaddrinfo(ip, port, &hints, &result); 
 
 	if (iResult != 0)
 	{
-		printf("getaddrinfo failed with error: %d\n", iResult);
+		displayError("getaddrinfo failed with error: \n", iResult);
 		WSACleanup();
-		exit(1);
 	}
 
 	// attempt to connect to an address until one succeeds
-	for (ptr = result; ptr != nullptr; ptr = ptr->ai_next) 
+	for (ptr = result; ptr != nullptr; ptr = ptr->ai_next)
 	{
 
 		// create a socket for connecting to server
@@ -44,19 +55,18 @@ ClientNetwork::ClientNetwork(char *ip, char *port)
 
 		if (ConnectSocket == INVALID_SOCKET)
 		{
-			printf("socket failed with error: %ld\n", WSAGetLastError());
+			displayError("socket failed with error: \n", WSAGetLastError());
 			WSACleanup();
-			exit(1);
 		}
 
 		// connect to server
 		iResult = connect(ConnectSocket, ptr->ai_addr, int(ptr->ai_addrlen));
 
-		if (iResult == SOCKET_ERROR) 
+		if (iResult == SOCKET_ERROR)
 		{
 			closesocket(ConnectSocket);
 			ConnectSocket = INVALID_SOCKET;
-			printf("The server is down... did not connect");
+			displayError("The server is down... did not connect", 0);
 		}
 	}
 
@@ -64,11 +74,10 @@ ClientNetwork::ClientNetwork(char *ip, char *port)
 	freeaddrinfo(result);
 
 	// check if connection failed
-	if (ConnectSocket == INVALID_SOCKET) 
+	if (ConnectSocket == INVALID_SOCKET)
 	{
-		printf("Unable to connect to server!\n");
+		displayError("Unable to connect to server!\n", 0);
 		WSACleanup();
-		exit(1);
 	}
 
 	// set the socket to be nonblocking
@@ -77,10 +86,9 @@ ClientNetwork::ClientNetwork(char *ip, char *port)
 	iResult = ioctlsocket(ConnectSocket, FIONBIO, &iMode);
 	if (iResult == SOCKET_ERROR)
 	{
-		printf("ioctlsocket failed with error: %d\n", WSAGetLastError());
+		displayError("ioctlsocket failed with error: \n", WSAGetLastError());
 		closesocket(ConnectSocket);
 		WSACleanup();
-		exit(1);
 	}
 
 	// disable Nagle's algorithm to send actions immediately instead of combining packets
@@ -100,10 +108,9 @@ int ClientNetwork::receivePackets(char *recvbuf)
 
 	if (iResult == 0)
 	{
-		printf("Connection closed\n");
+		displayError("Connection closed\n", 0);
 		closesocket(ConnectSocket);
 		WSACleanup();
-		exit(1);
 	}
 
 	return iResult;
