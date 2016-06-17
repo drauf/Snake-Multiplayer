@@ -3,16 +3,13 @@
 #include "DirectionEnum.h"
 
 
-#define MAX_SNAKE_LENGTH 200
-
-
 struct Player
 {
 	unsigned char id;
 	bool is_ready;
 	bool is_alive;
+	Position position;
 	DirectionEnum direction;
-	Position positions[MAX_SNAKE_LENGTH];
 
 	Player()
 	{
@@ -28,6 +25,12 @@ struct Player
 		this->is_ready = false;
 		this->is_alive = true;
 		this->direction = direction;
-		this->positions[0] = starting_position;
+		this->position = starting_position;
+	}
+	
+	void move(unsigned char x, unsigned char y)
+	{
+		position.x += x;
+		position.y += y;
 	}
 };

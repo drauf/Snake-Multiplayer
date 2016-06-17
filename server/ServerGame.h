@@ -14,6 +14,7 @@
 class ServerGame
 {
 	ServerNetwork* network;
+	bool game_started;
 	unsigned int player_count;
 	unsigned int ready_player_count;
 	char network_data[MAX_PACKET_SIZE]; // data buffer
@@ -25,20 +26,22 @@ public:
 	explicit ServerGame(char *port);
 	~ServerGame();
 
-	void update();
+	void gameTick();
+	void getNewClients();
 	void receiveFromClients();
 
 private:
-	void startGame();
+	void movePlayers();
 
 	void handleReadyPacket(unsigned char id);
 	void handleActionPacket(unsigned char id, int direction);
 
 	void initializePlayer(unsigned char id);
 
+	void sendTickPacket() const;
 	void sendInitialPacket(unsigned char id) const;
 	void sendNewPlayerPacket(unsigned char id) const;
 
-	void createInitialPacket(unsigned char id, char packet_data[]) const;
+	void createPacketWithPositions(unsigned char id, char packet_data[]) const;
 	void createNewPlayerPacket(unsigned char id, char packet_data[]) const;
 };

@@ -3,6 +3,7 @@
 
 ServerGame::ServerGame(char *port)
 {
+	game_started = false;
 	player_count = 0;
 	ready_player_count = 0;
 	network = new ServerNetwork(port);
@@ -14,18 +15,26 @@ ServerGame::~ServerGame()
 }
 
 
-void ServerGame::update()
+void ServerGame::gameTick()
 {
-	// get new clients
+	if (!game_started) return;
+
+	movePlayers();
+	sendTickPacket();
+}
+
+
+void ServerGame::getNewClients()
+{
+	if (game_started) return;
+
 	if (player_count < MAX_PLAYERS && network->acceptNewClient(player_count))
 	{
-		Log("client %d has connected to the server\n", ++player_count);
+		Log("client %d has connected to the server\n", player_count + 1);
 		initializePlayer(player_count);
 		sendInitialPacket(player_count);
 		sendNewPlayerPacket(player_count);
 	}
-
-	receiveFromClients();
 }
 
 
@@ -33,8 +42,9 @@ void ServerGame::receiveFromClients()
 {
 	Packet packet;
 	std::map<unsigned int, SOCKET>::iterator iter;
+	auto localSessionsCopy = network->sessions;
 
-	for (iter = network->sessions.begin(); iter != network->sessions.end(); ++iter)
+	for (iter = localSessionsCopy.begin(); iter != localSessionsCopy.end(); ++iter)
 	{
 		int data_length = network->receiveData(iter->first, network_data);
 
@@ -67,14 +77,61 @@ void ServerGame::receiveFromClients()
 }
 
 
-void ServerGame::startGame()
+void ServerGame::movePlayers()
 {
-	// placeholder
+	for (int id = 0; id < player_count; id++)
+	{
+		if (!players[id].is_alive) continue;
+
+		auto pos = players[id].position;
+		switch (players[id].direction)
+		{
+		case UP:
+			if (pos.y != 0 && !board[pos.x][pos.y - 1])
+			{
+				players[id].move(0, -1);
+				board[pos.x][pos.y - 1] = true;
+				return;
+			}
+			break;
+		case RIGHT:
+			if (pos.x != MAX_X && !board[pos.x + 1][pos.y])
+			{
+				players[id].move(1, 0);
+				board[pos.x + 1][pos.y] = true;
+				return;
+			}
+			break;
+		case DOWN:
+			if (pos.y != MAX_Y && !board[pos.x][pos.y + 1])
+			{
+				players[id].move(0, 1);
+				board[pos.x][pos.y + 1] = true;
+				return;
+			}
+			break;
+		case LEFT:
+			if (pos.x != 0 && !board[pos.x - 1][pos.y])
+			{
+				players[id].move(-1, 0);
+				board[pos.x - 1][pos.y] = true;
+				return;
+			}
+			break;
+		default:
+			return;
+		}
+
+		players[id].is_alive = false;
+		Log("client %d was killed at %d, %d\n", id, players[id].position.x, players[id].position.y);
+	}
 }
 
 
 void ServerGame::handleReadyPacket(unsigned char id)
 {
+	if (game_started) return;
+
 	// toggle the flag
 	if (players[id].is_ready)
 	{
@@ -91,8 +148,8 @@ void ServerGame::handleReadyPacket(unsigned char id)
 
 	if (ready_player_count == player_count)
 	{
+		game_started = true;
 		Log("All clients are ready, starting the game\n");
-		startGame();
 	}
 }
 
@@ -130,16 +187,31 @@ void ServerGame::handleActionPacket(unsigned char id, int direction)
 void ServerGame::initializePlayer(unsigned char id)
 {
 	auto dir = DirectionEnum(rand() % LEFT);
-	unsigned char x = MAX_X / 5 + rand() % MAX_X / 5 + 2 * ((id + 1) % 2) * MAX_X / 5;
+	unsigned char x = MAX_X / 5 + rand() % MAX_X / 5 + 2 * (id % 2) * MAX_X / 5;
 	unsigned char y = MAX_Y / 5 + rand() % MAX_Y / 5;
-	if (id > 2) y += 2 * MAX_Y / 5;
+	if (id >= 2) y += 2 * MAX_Y / 5;
 
 	Player p = Player(id, dir, Position(x, y));
 
-	LogInDebugOnly("Created player %d with direction %d and position (%d, %d)\n", p.id, p.direction, p.positions[0].x, p.positions[0].y);
+	LogInDebugOnly("Created player %d with direction %d and position (%d, %d)\n", p.id, p.direction, p.position.x, p.position.y);
 
-	players[id - 1] = p;
+	players[id] = p;
 	board[x][y] = true;
+	player_count++;
+}
+
+
+void ServerGame::sendTickPacket() const
+{
+	const unsigned int packet_size = sizeof(Packet);
+	char packet_data[packet_size];
+
+	Packet packet;
+	packet.packet_type = TICK_PACKET;
+	createPacketWithPositions(-1, packet.data);
+
+	packet.serialize(packet_data);
+	network->sendToAll(packet_data, packet_size);
 }
 
 
@@ -150,7 +222,7 @@ void ServerGame::sendInitialPacket(unsigned char id) const
 
 	Packet packet;
 	packet.packet_type = INIT_PACKET;
-	createInitialPacket(id, packet.data);
+	createPacketWithPositions(id, packet.data);
 
 	packet.serialize(packet_data);
 	network->sendToOne(id, packet_data, packet_size);
@@ -171,7 +243,7 @@ void ServerGame::sendNewPlayerPacket(unsigned char id) const
 }
 
 
-void ServerGame::createInitialPacket(unsigned char id, char packet_data[]) const
+void ServerGame::createPacketWithPositions(unsigned char id, char packet_data[]) const
 {
 	int index = 0;
 
@@ -181,20 +253,20 @@ void ServerGame::createInitialPacket(unsigned char id, char packet_data[]) const
 	for (unsigned int i = 0; i < player_count; i++)
 	{
 		packet_data[index++] = players[i].id;
-		packet_data[index++] = players[i].positions[0].x;
-		packet_data[index++] = players[i].positions[0].y;
+		packet_data[index++] = players[i].position.x;
+		packet_data[index++] = players[i].position.y;
 	}
 
 	// add two -1s at the end for easier parsing on client side
 	packet_data[index + 1] = packet_data[index] = -1;
 
-	LogInDebugOnly("Created initial pakcet for player: %d, %s\n", id, packet_data);
+	LogInDebugOnly("Created packet with positions: %s\n", packet_data);
 }
 
 
 void ServerGame::createNewPlayerPacket(unsigned char id, char packet_data[]) const
 {
-	packet_data[0] = players[id - 1].positions[0].x;
-	packet_data[1] = players[id - 1].positions[0].y;
+	packet_data[0] = players[id - 1].position.x;
+	packet_data[1] = players[id - 1].position.y;
 	LogInDebugOnly("Created new player packet: %d, %d\n", packet_data[0], packet_data[1]);
 }
