@@ -32,7 +32,7 @@ void printServerAddress(char *port)
 	auto b3 = reinterpret_cast<struct in_addr *>((host->h_addr))->S_un.S_un_b.s_b3;
 	auto b4 = reinterpret_cast<struct in_addr *>((host->h_addr))->S_un.S_un_b.s_b4;
 
-	printf("IP: %d.%d.%d.%d:%s\n", b1, b2, b3, b4, port);
+	Log("IP: %d.%d.%d.%d:%s\n", b1, b2, b3, b4, port);
 
 	WSACleanup();
 }
@@ -49,7 +49,7 @@ ServerNetwork::ServerNetwork(char *port)
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (iResult != 0)
 	{
-		printf("WSAStartup failed with error: %d\n", iResult);
+		Log("WSAStartup failed with error: %d\n", iResult);
 		exit(1);
 	}
 
@@ -65,7 +65,7 @@ ServerNetwork::ServerNetwork(char *port)
 
 	if (iResult != 0)
 	{
-		printf("getaddrinfo failed with error: %d\n", iResult);
+		Log("getaddrinfo failed with error: %d\n", iResult);
 		WSACleanup();
 		exit(1);
 	}
@@ -78,7 +78,7 @@ ServerNetwork::ServerNetwork(char *port)
 
 	if (ListenSocket == INVALID_SOCKET)
 	{
-		printf("socket failed with error: %ld\n", WSAGetLastError());
+		Log("socket failed with error: %ld\n", WSAGetLastError());
 		freeaddrinfo(result);
 		WSACleanup();
 		exit(1);
@@ -90,7 +90,7 @@ ServerNetwork::ServerNetwork(char *port)
 
 	if (iResult == SOCKET_ERROR)
 	{
-		printf("ioctlsocket failed with error: %d\n", WSAGetLastError());
+		Log("ioctlsocket failed with error: %d\n", WSAGetLastError());
 		closesocket(ListenSocket);
 		WSACleanup();
 		exit(1);
@@ -101,7 +101,7 @@ ServerNetwork::ServerNetwork(char *port)
 
 	if (iResult == SOCKET_ERROR)
 	{
-		printf("bind failed with error: %d\n", WSAGetLastError());
+		Log("bind failed with error: %d\n", WSAGetLastError());
 		freeaddrinfo(result);
 		closesocket(ListenSocket);
 		WSACleanup();
@@ -116,7 +116,7 @@ ServerNetwork::ServerNetwork(char *port)
 
 	if (iResult == SOCKET_ERROR)
 	{
-		printf("listen failed with error: %d\n", WSAGetLastError());
+		Log("listen failed with error: %d\n", WSAGetLastError());
 		closesocket(ListenSocket);
 		WSACleanup();
 		exit(1);
@@ -159,7 +159,7 @@ int ServerNetwork::receiveData(unsigned int client_id, char *recvbuf)
 
 		if (iResult == 0)
 		{
-			printf("Connection closed\n");
+			Log("Connection closed\n");
 			closesocket(currentSocket);
 		}
 
@@ -178,7 +178,7 @@ void ServerNetwork::sendToOne(unsigned int id, char* packets, int totalSize)
 
 	if (iSendResult == SOCKET_ERROR)
 	{
-		printf("send failed with error: %d\n", WSAGetLastError());
+		Log("send failed with error: %d\n", WSAGetLastError());
 		closesocket(socket);
 	}
 }
@@ -199,7 +199,7 @@ void ServerNetwork::sendToAllButOne(unsigned id, char* packets, int totalSize)
 
 		if (iSendResult == SOCKET_ERROR)
 		{
-			printf("send failed with error: %d\n", WSAGetLastError());
+			Log("send failed with error: %d\n", WSAGetLastError());
 			closesocket(currentSocket);
 		}
 	}
@@ -219,7 +219,7 @@ void ServerNetwork::sendToAll(char *packets, int totalSize)
 
 		if (iSendResult == SOCKET_ERROR)
 		{
-			printf("send failed with error: %d\n", WSAGetLastError());
+			Log("send failed with error: %d\n", WSAGetLastError());
 			closesocket(currentSocket);
 		}
 	}

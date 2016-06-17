@@ -19,7 +19,7 @@ void ServerGame::update()
 	// get new clients
 	if (player_count < MAX_PLAYERS && network->acceptNewClient(player_count))
 	{
-		printf("client %d has connected to the server\n", ++player_count);
+		Log("client %d has connected to the server\n", ++player_count);
 		initializePlayer(player_count);
 		sendInitialPacket(player_count);
 		sendNewPlayerPacket(player_count);
@@ -58,7 +58,8 @@ void ServerGame::receiveFromClients()
 				handleReadyPacket(iter->first - 1);
 				break;
 			default:
-				printf("error in packet types\n");
+				Log("error in packet types\n");
+				LogInDebugOnly("%s\n", packet.data);
 				break;
 			}
 		}
@@ -86,15 +87,11 @@ void ServerGame::handleReadyPacket(unsigned char id)
 		players[id].is_ready = true;
 	}
 
-#ifdef _DEBUG
-	printf("client %d changed state to %s\n", id + 1, players[id].is_ready ? "ready" : "not ready");
-#endif
-	
+	Log("client %d changed state to %s\n", id + 1, players[id].is_ready ? "ready" : "not ready");
+
 	if (ready_player_count == player_count)
 	{
-#ifdef _DEBUG
-		printf("All clients are ready, starting the game");
-#endif
+		Log("All clients are ready, starting the game\n");
 		startGame();
 	}
 }
@@ -126,10 +123,7 @@ void ServerGame::handleActionPacket(unsigned char id, int direction)
 	}
 
 	players[id].direction = curDirection;
-
-#ifdef _DEBUG
-	printf("client %d changed direction to %d\n", id + 1, curDirection);
-#endif
+	LogInDebugOnly("client %d changed direction to %d\n", id + 1, curDirection);
 }
 
 
@@ -142,9 +136,7 @@ void ServerGame::initializePlayer(unsigned char id)
 
 	Player p = Player(id, dir, Position(x, y));
 
-	#ifdef _DEBUG
-		printf("Created player %d with direction %d and position (%d, %d)\n", p.id, p.direction, p.positions[0].x, p.positions[0].y);
-	#endif
+	LogInDebugOnly("Created player %d with direction %d and position (%d, %d)\n", p.id, p.direction, p.positions[0].x, p.positions[0].y);
 
 	players[id - 1] = p;
 	board[x][y] = true;
@@ -169,7 +161,6 @@ void ServerGame::sendNewPlayerPacket(unsigned char id) const
 {
 	const unsigned int packet_size = sizeof(Packet);
 	char packet_data[packet_size];
-
 
 	Packet packet;
 	packet.packet_type = NEW_PLAYER_CONNECTED;
@@ -197,12 +188,7 @@ void ServerGame::createInitialPacket(unsigned char id, char packet_data[]) const
 	// add two -1s at the end for easier parsing on client side
 	packet_data[index + 1] = packet_data[index] = -1;
 
-	#ifdef _DEBUG
-		printf("Created initial packet for client %d:\n", id);
-		for (unsigned int i = 0; i < (1 + player_count) * 3; i++)
-			printf("%d,", packet_data[i]);
-		printf("\n");
-	#endif
+	LogInDebugOnly("Created initial pakcet for player: %d, %s\n", id, packet_data);
 }
 
 
@@ -210,8 +196,5 @@ void ServerGame::createNewPlayerPacket(unsigned char id, char packet_data[]) con
 {
 	packet_data[0] = players[id - 1].positions[0].x;
 	packet_data[1] = players[id - 1].positions[0].y;
-
-	#ifdef _DEBUG
-		printf("Created new player packet: %d, %d\n", packet_data[0], packet_data[1]);
-	#endif
+	LogInDebugOnly("Created new player packet: %d, %d\n", packet_data[0], packet_data[1]);
 }

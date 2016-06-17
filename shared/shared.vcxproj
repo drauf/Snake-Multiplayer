@@ -133,6 +133,7 @@
     <ClInclude Include="DirectionEnum.h" />
     <ClInclude Include="Networking.h" />
     <ClInclude Include="Position.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="TileTypeEnum.h" />
   </ItemGroup>
   <ItemGroup>
