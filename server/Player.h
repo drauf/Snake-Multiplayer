@@ -1,6 +1,6 @@
 #pragma once
 #include "Position.h"
-#include "../client/DirectionEnum.h"
+#include "DirectionEnum.h"
 
 
 #define MAX_SNAKE_LENGTH 200

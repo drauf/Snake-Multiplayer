@@ -24,6 +24,7 @@
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>Networking</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>Shared</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -129,7 +130,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DirectionEnum.h" />
     <ClInclude Include="Networking.h" />
+    <ClInclude Include="Position.h" />
+    <ClInclude Include="TileTypeEnum.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Networking.cpp" />
