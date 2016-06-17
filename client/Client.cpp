@@ -59,6 +59,9 @@ void HandleKeyboardInput(HWND hWnd, WPARAM input)
 	case VK_DOWN:
 		client->sendActionPacket(DOWN);
 		break;
+	case VK_SPACE:
+		client->sendReadyPacket();
+		break;
 	case VK_ESCAPE:
 		PostQuitMessage(0);
 		break;

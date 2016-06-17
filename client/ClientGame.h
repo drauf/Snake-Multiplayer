@@ -16,6 +16,7 @@ public:
 	ClientGame(char *ip, char *port, HWND hWnd);
 	~ClientGame();
 
+	void sendReadyPacket() const;
 	void sendActionPacket(DirectionEnum direction) const;
 	void update(TileTypeEnum board[MAX_X][MAX_Y]);
 

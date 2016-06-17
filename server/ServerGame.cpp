@@ -1,11 +1,10 @@
 #include "ServerGame.h"
 
 
-unsigned int ServerGame::player_count;
-
-
 ServerGame::ServerGame(char *port)
 {
+	player_count = 0;
+	ready_player_count = 0;
 	network = new ServerNetwork(port);
 }
 
@@ -55,11 +54,48 @@ void ServerGame::receiveFromClients()
 			case ACTION_EVENT:
 				handleActionPacket(iter->first - 1, network_data[4]);
 				break;
+			case READY_PACKET:
+				handleReadyPacket(iter->first - 1);
+				break;
 			default:
 				printf("error in packet types\n");
 				break;
 			}
 		}
+	}
+}
+
+
+void ServerGame::startGame()
+{
+	// placeholder
+}
+
+
+void ServerGame::handleReadyPacket(unsigned char id)
+{
+	// toggle the flag
+	if (players[id].is_ready)
+	{
+		ready_player_count--;
+		players[id].is_ready = false;
+	}
+	else
+	{
+		ready_player_count++;
+		players[id].is_ready = true;
+	}
+
+#ifdef _DEBUG
+	printf("client %d changed state to %s\n", id + 1, players[id].is_ready ? "ready" : "not ready");
+#endif
+	
+	if (ready_player_count == player_count)
+	{
+#ifdef _DEBUG
+		printf("All clients are ready, starting the game");
+#endif
+		startGame();
 	}
 }
 

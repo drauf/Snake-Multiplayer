@@ -15,6 +15,19 @@ ClientGame::~ClientGame()
 }
 
 
+void ClientGame::sendReadyPacket() const
+{
+	const unsigned int packet_size = sizeof(Packet);
+	char packet_data[packet_size];
+
+	Packet packet;
+	packet.packet_type = READY_PACKET;
+
+	packet.serialize(packet_data);
+	NetworkServices::sendMessage(network->ConnectSocket, packet_data, packet_size);
+}
+
+
 void ClientGame::sendActionPacket(DirectionEnum direction) const
 {
 	// send action packet
