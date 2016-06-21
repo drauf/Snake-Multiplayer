@@ -161,6 +161,7 @@ int ServerNetwork::receiveData(unsigned int client_id, char *recvbuf)
 		{
 			Log("Connection closed\n");
 			closesocket(currentSocket);
+			sessions.erase(currentSocket);
 		}
 
 		return iResult;
@@ -180,6 +181,7 @@ void ServerNetwork::sendToOne(unsigned int id, char* packets, int totalSize)
 	{
 		Log("send failed with error: %d\n", WSAGetLastError());
 		closesocket(socket);
+		sessions.erase(socket);
 	}
 }
 
@@ -187,12 +189,16 @@ void ServerNetwork::sendToOne(unsigned int id, char* packets, int totalSize)
 void ServerNetwork::sendToAllButOne(unsigned id, char* packets, int totalSize)
 {
 	SOCKET currentSocket;
-	std::map<unsigned int, SOCKET>::iterator iter;
+	std::map<unsigned int, SOCKET>::iterator iter = sessions.begin();
 	int iSendResult;
 
-	for (iter = sessions.begin(); iter != sessions.end(); ++iter)
+	while (iter != sessions.end())
 	{
-		if (iter->first == id) continue;
+		if (iter->first == id)
+		{
+			++iter;
+			continue;
+		}
 
 		currentSocket = iter->second;
 		iSendResult = NetworkServices::sendMessage(currentSocket, packets, totalSize);
@@ -201,6 +207,11 @@ void ServerNetwork::sendToAllButOne(unsigned id, char* packets, int totalSize)
 		{
 			Log("send failed with error: %d\n", WSAGetLastError());
 			closesocket(currentSocket);
+			iter = sessions.erase(iter);
+		} 
+		else
+		{
+			++iter;
 		}
 	}
 }
@@ -209,10 +220,10 @@ void ServerNetwork::sendToAllButOne(unsigned id, char* packets, int totalSize)
 void ServerNetwork::sendToAll(char *packets, int totalSize)
 {
 	SOCKET currentSocket;
-	std::map<unsigned int, SOCKET>::iterator iter;
+	std::map<unsigned int, SOCKET>::iterator iter = sessions.begin();
 	int iSendResult;
 
-	for (iter = sessions.begin(); iter != sessions.end(); ++iter)
+	while (iter != sessions.end())
 	{
 		currentSocket = iter->second;
 		iSendResult = NetworkServices::sendMessage(currentSocket, packets, totalSize);
@@ -221,6 +232,11 @@ void ServerNetwork::sendToAll(char *packets, int totalSize)
 		{
 			Log("send failed with error: %d\n", WSAGetLastError());
 			closesocket(currentSocket);
+			iter = sessions.erase(iter);
+		}
+		else
+		{
+			++iter;
 		}
 	}
 }
