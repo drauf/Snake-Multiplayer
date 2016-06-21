@@ -67,6 +67,8 @@ void ClientGame::update(TileTypeEnum board[MAX_X][MAX_Y])
 		case TICK_PACKET:
 			handleTickPacket(packet.data, board);
 			break;
+		case NEW_PLAYER_CONNECTED:
+			handleNewPlayerPacket(packet.data, board);
 		default:
 			break;
 		}
@@ -119,4 +121,13 @@ void ClientGame::handleTickPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y])
 			board[x][y] = ANOTHER_PLAYER;
 		}
 	}
+}
+
+
+void ClientGame::handleNewPlayerPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]) const
+{
+	char x = data[0];
+	char y = data[1];
+
+	board[x][y] = ANOTHER_PLAYER;
 }
