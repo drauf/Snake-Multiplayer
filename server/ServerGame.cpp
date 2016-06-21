@@ -91,7 +91,7 @@ void ServerGame::movePlayers()
 			{
 				players[id].move(0, -1);
 				board[pos.x][pos.y - 1] = true;
-				return;
+				continue;
 			}
 			break;
 		case RIGHT:
@@ -99,7 +99,7 @@ void ServerGame::movePlayers()
 			{
 				players[id].move(1, 0);
 				board[pos.x + 1][pos.y] = true;
-				return;
+				continue;
 			}
 			break;
 		case DOWN:
@@ -107,7 +107,7 @@ void ServerGame::movePlayers()
 			{
 				players[id].move(0, 1);
 				board[pos.x][pos.y + 1] = true;
-				return;
+				continue;
 			}
 			break;
 		case LEFT:
@@ -115,11 +115,11 @@ void ServerGame::movePlayers()
 			{
 				players[id].move(-1, 0);
 				board[pos.x - 1][pos.y] = true;
-				return;
+				continue;
 			}
 			break;
 		default:
-			return;
+			continue;
 		}
 
 		players[id].is_alive = false;
