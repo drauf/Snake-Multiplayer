@@ -28,65 +28,10 @@ void Drawing::Init(HWND hWnd)
 }
 
 
-void Drawing::SetBG(HWND hWnd)
-{
-	PAINTSTRUCT PaintStruct;
-	HDC hdc = GetDC(hWnd);
-
-	static RECT clientArea;
-	GetClientRect(hWnd, &clientArea);
-	FillRect(hdc, &clientArea, clearBrush);
-
-	ReleaseDC(hWnd, hdc);
-	EndPaint(hWnd, &PaintStruct);
-}
-
-
-void Drawing::ClearScreen(HWND hWnd)
-{
-	PAINTSTRUCT PaintStruct;
-	HDC hdc = GetDC(hWnd);
-
-	FillRect(hdc, &gameArea, backgroundBrush);
-
-	ReleaseDC(hWnd, hdc);
-	EndPaint(hWnd, &PaintStruct);
-}
-
-
-void Drawing::DrawSquare(HWND hWnd, int xGrid, int yGrid, TileTypeEnum tile)
-{
-	PAINTSTRUCT PaintStruct;
-	HDC hdc = GetDC(hWnd);
-
-	// calculate positions for the square, add/substract 1 to leave a small gap between squares
-	static RECT drawPos;
-	drawPos.top = (yGrid + 2)*TILESIZE + 8;
-	drawPos.bottom = drawPos.top + TILESIZE - 1;
-	drawPos.left = xGrid*TILESIZE + 11;
-	drawPos.right = drawPos.left + TILESIZE - 1;
-
-	switch (tile) {
-	case CURRENT_PLAYER:
-		FillRect(hdc, &drawPos, currentPlayersBrush);
-		break;
-	case ANOTHER_PLAYER:
-		FillRect(hdc, &drawPos, otherPlayersBrush);
-		break;
-	case EMPTY:
-		FillRect(hdc, &drawPos, backgroundBrush);
-		break;
-	}
-
-	ReleaseDC(hWnd, hdc);
-	EndPaint(hWnd, &PaintStruct);
-}
-
-
 void Drawing::DrawStatus(HWND hWnd, std::string status)
 {
 	PAINTSTRUCT PaintStruct;
-	HDC hdc = GetDC(hWnd);
+	HDC hdc = BeginPaint(hWnd, &PaintStruct);
 
 	// draw with background color over the old status
 	FillRect(hdc, &statusArea, backgroundBrush);
@@ -97,18 +42,40 @@ void Drawing::DrawStatus(HWND hWnd, std::string status)
 	SetTextColor(hdc, RGB(255, 255, 255)); // white
 	DrawText(hdc, status.c_str(), -1, &statusArea, DT_LEFT);
 
-	ReleaseDC(hWnd, hdc);
 	EndPaint(hWnd, &PaintStruct);
 }
 
 
 void Drawing::RedrawWindow(HWND hWnd, TileTypeEnum board[MAX_X][MAX_Y])
 {
-	SetBG(hWnd);
-	ClearScreen(hWnd);
+	PAINTSTRUCT PaintStruct;
+	HDC hdc = BeginPaint(hWnd, &PaintStruct);
 
+	static RECT clientArea;
+	GetClientRect(hWnd, &clientArea);
+	FillRect(hdc, &clientArea, clearBrush);
+	FillRect(hdc, &gameArea, backgroundBrush);
+
+	static RECT drawPos;;
 	for (int x = 0; x < MAX_X; x++)
+	{
 		for (int y = 0; y < MAX_Y; y++)
+		{
 			if (board[x][y] != EMPTY)
-				DrawSquare(hWnd, x, y, board[x][y]);
+			{
+				drawPos.top = (y + 2)*TILESIZE + 8;
+				drawPos.bottom = drawPos.top + TILESIZE - 1;
+				drawPos.left = x*TILESIZE + 11;
+				drawPos.right = drawPos.left + TILESIZE - 1;
+
+				if (board[x][y] == CURRENT_PLAYER) {
+					FillRect(hdc, &drawPos, currentPlayersBrush);
+				} else { // ANOTHER_PLAYER
+					FillRect(hdc, &drawPos, otherPlayersBrush);
+				}
+			}
+		}
+	}
+
+	EndPaint(hWnd, &PaintStruct);
 }

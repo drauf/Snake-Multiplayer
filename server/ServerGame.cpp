@@ -123,7 +123,7 @@ void ServerGame::movePlayers()
 		}
 
 		players[id].is_alive = false;
-		Log("client %d was killed at %d, %d\n", id, players[id].position.x, players[id].position.y);
+		Log("client %d was killed at %d, %d\n", id + 1, players[id].position.x, players[id].position.y);
 	}
 }
 
@@ -208,7 +208,7 @@ void ServerGame::sendTickPacket() const
 
 	Packet packet;
 	packet.packet_type = TICK_PACKET;
-	createPacketWithPositions(-1, packet.data);
+	createPacketWithPositions(0, packet.data);
 
 	packet.serialize(packet_data);
 	network->sendToAll(packet_data, packet_size);

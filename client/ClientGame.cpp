@@ -64,11 +64,16 @@ void ClientGame::update(TileTypeEnum board[MAX_X][MAX_Y])
 		case INIT_PACKET:
 			handleInitPacket(packet.data, board);
 			break;
+		case TICK_PACKET:
+			handleTickPacket(packet.data, board);
+			break;
 		default:
 			break;
 		}
-		
 	}
+
+	InvalidateRect(hWnd, nullptr, TRUE);
+	UpdateWindow(hWnd);
 }
 
 
@@ -91,7 +96,27 @@ void ClientGame::handleInitPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y])
 		{
 			board[x][y] = ANOTHER_PLAYER;
 		}
+	}
+}
 
-		Drawing::DrawSquare(hWnd, x, y, board[x][y]);
+
+void ClientGame::handleTickPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]) const
+{
+	int index = 1;
+
+	while (data[index] != -1)
+	{
+		char id = data[index++];
+		char x = data[index++];
+		char y = data[index++];
+
+		if (id == client_id)
+		{
+			board[x][y] = CURRENT_PLAYER;
+		}
+		else
+		{
+			board[x][y] = ANOTHER_PLAYER;
+		}
 	}
 }
