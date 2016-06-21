@@ -103,7 +103,7 @@ void ServerGame::movePlayers()
 			}
 			break;
 		case DOWN:
-			if (pos.y != MAX_Y && !board[pos.x][pos.y + 1])
+			if (pos.y != MAX_Y - 1 && !board[pos.x][pos.y + 1])
 			{
 				players[id].move(0, 1);
 				board[pos.x][pos.y + 1] = true;
