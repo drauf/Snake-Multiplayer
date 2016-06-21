@@ -191,7 +191,7 @@ void ServerGame::initializePlayer(unsigned char id)
 	unsigned char y = MAX_Y / 5 + rand() % MAX_Y / 5;
 	if (id >= 2) y += 2 * MAX_Y / 5;
 
-	Player p = Player(id, dir, Position(x, y));
+	Player p = Player(id + 1, dir, Position(x, y));
 
 	LogInDebugOnly("Created player %d with direction %d and position (%d, %d)\n", p.id, p.direction, p.position.x, p.position.y);
 
