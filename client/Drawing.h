@@ -8,10 +8,10 @@
 #define WINDOWSIZE_X 1000
 #define WINDOWSIZE_Y 800
 // game board size in tiles
-#define MAX_X 64
-#define MAX_Y 46
+#define MAX_X 120
+#define MAX_Y 87
 // tile size in pixels
-#define TILESIZE 15
+#define TILESIZE 8
 // menu event IDs
 #define ID_FILE_NEWGAME 9001
 #define ID_FILE_EXIT 9002
@@ -31,9 +31,6 @@ class Drawing
 
 public:
 	static void Init(HWND hWnd);
-	static void SetBG(HWND hWnd);
-	static void ClearScreen(HWND hWnd);
-	static void DrawSquare(HWND hWnd, int xGrid, int yGrid, TileTypeEnum tile);
 	static void DrawStatus(HWND hWnd, std::string status);
 	static void RedrawWindow(HWND hWnd, TileTypeEnum board[MAX_X][MAX_Y]);
 };

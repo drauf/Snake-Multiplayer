@@ -2,7 +2,7 @@
 
 
 RECT Drawing::statusArea = { 10, 5, 200, 30 }; // status text area
-RECT Drawing::gameArea = { 10, 37, 971, 728 }; // main game area
+RECT Drawing::gameArea = { 10, 37, 971, 726 }; // main game area
 
 const HBRUSH Drawing::currentPlayersBrush = CreateSolidBrush(RGB(80, 180, 80)); // green
 const HBRUSH Drawing::otherPlayersBrush = CreateSolidBrush(RGB(50, 40, 20)); // black
@@ -63,7 +63,7 @@ void Drawing::RedrawWindow(HWND hWnd, TileTypeEnum board[MAX_X][MAX_Y])
 		{
 			if (board[x][y] != EMPTY)
 			{
-				drawPos.top = (y + 2)*TILESIZE + 8;
+				drawPos.top = (y + 2)*TILESIZE + 22;
 				drawPos.bottom = drawPos.top + TILESIZE - 1;
 				drawPos.left = x*TILESIZE + 11;
 				drawPos.right = drawPos.left + TILESIZE - 1;

@@ -7,8 +7,8 @@
 
 #define MAX_PLAYERS 4
 // game board size in tiles
-#define MAX_X 64
-#define MAX_Y 46
+#define MAX_X 119
+#define MAX_Y 86
 
 
 class ServerGame
