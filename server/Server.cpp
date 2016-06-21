@@ -25,9 +25,12 @@ void __cdecl receiveFromClientsThread(void *args)
 
 void __cdecl gameLoop(void *args)
 {
+	float tickLength = 80;
+
 	while (true)
 	{
-		Sleep(100);
+		Sleep(tickLength);
+		tickLength *= 0.999;
 		server->gameTick();
 	}
 }
