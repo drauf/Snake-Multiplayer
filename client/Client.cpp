@@ -46,6 +46,8 @@ void HandleMenuSelection(HWND hWnd, WPARAM param)
 
 void HandleKeyboardInput(HWND hWnd, WPARAM input)
 {
+	if (client == nullptr) return;
+
 	switch (input) {
 	case VK_RIGHT:
 		client->sendActionPacket(RIGHT);
