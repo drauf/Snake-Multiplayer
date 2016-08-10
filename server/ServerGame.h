@@ -32,6 +32,8 @@ public:
 	void receiveFromClients();
 
 private:
+	void restartGame();
+
 	void movePlayers();
 
 	void handleReadyPacket(unsigned char id);
@@ -40,9 +42,11 @@ private:
 	void initializePlayer(unsigned char id);
 
 	void sendTickPacket() const;
+	void sendRestartPacket() const;
 	void sendInitialPacket(unsigned char id) const;
 	void sendNewPlayerPacket(unsigned char id) const;
 
+	void createRestartPacket(char packet_data[]) const;
 	void createPacketWithPositions(unsigned char id, char packet_data[]) const;
 	void createNewPlayerPacket(unsigned char id, char packet_data[]) const;
 };

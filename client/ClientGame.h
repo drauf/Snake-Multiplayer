@@ -23,5 +23,6 @@ public:
 private:
 	void handleInitPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]);
 	void handleTickPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]) const;
+	void handleRestartPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]) const;
 	void handleNewPlayerPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]) const;
 };

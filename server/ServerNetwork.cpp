@@ -186,7 +186,7 @@ void ServerNetwork::sendToOne(unsigned int id, char* packets, int totalSize)
 }
 
 
-void ServerNetwork::sendToAllButOne(unsigned id, char* packets, int totalSize)
+void ServerNetwork::sendToAllButOne(unsigned int id, char* packets, int totalSize)
 {
 	SOCKET currentSocket;
 	std::map<unsigned int, SOCKET>::iterator iter = sessions.begin();
