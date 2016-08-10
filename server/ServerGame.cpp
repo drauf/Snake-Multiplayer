@@ -150,7 +150,7 @@ void ServerGame::handleReadyPacket(unsigned char id)
 
 	Log("client %d changed state to %s\n", id + 1, players[id].is_ready ? "ready" : "not ready");
 
-	if (ready_player_count == player_count)
+	if (player_count > 1 && ready_player_count == player_count)
 	{
 		game_started = true;
 		Log("All clients are ready, starting the game\n");
