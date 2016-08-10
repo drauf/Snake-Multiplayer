@@ -67,8 +67,12 @@ void ClientGame::update(TileTypeEnum board[MAX_X][MAX_Y])
 		case TICK_PACKET:
 			handleTickPacket(packet.data, board);
 			break;
+		case RESTART_PACKET:
+			handleRestartPacket(packet.data, board);
+			break;
 		case NEW_PLAYER_CONNECTED:
 			handleNewPlayerPacket(packet.data, board);
+			break;
 		default:
 			break;
 		}
@@ -105,6 +109,29 @@ void ClientGame::handleInitPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y])
 void ClientGame::handleTickPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]) const
 {
 	int index = 1;
+
+	while (data[index] != -1)
+	{
+		char id = data[index++];
+		char x = data[index++];
+		char y = data[index++];
+
+		if (id == client_id)
+		{
+			board[x][y] = CURRENT_PLAYER;
+		}
+		else
+		{
+			board[x][y] = ANOTHER_PLAYER;
+		}
+	}
+}
+
+
+void ClientGame::handleRestartPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]) const
+{
+	int index = 0;
+	memset(board, 0, sizeof(board[0][0]) * MAX_X * MAX_Y); // clear the board
 
 	while (data[index] != -1)
 	{

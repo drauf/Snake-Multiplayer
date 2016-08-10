@@ -6,6 +6,7 @@ ServerGame::ServerGame(char *port)
 	game_started = false;
 	player_count = 0;
 	ready_player_count = 0;
+	alive_player_count = 0;
 	network = new ServerNetwork(port);
 }
 
@@ -17,6 +18,8 @@ ServerGame::~ServerGame()
 
 void ServerGame::gameTick()
 {
+	if (game_started && alive_player_count < 2) restartGame();
+
 	if (!game_started) return;
 
 	movePlayers();
@@ -30,10 +33,10 @@ void ServerGame::getNewClients()
 
 	if (player_count < MAX_PLAYERS && network->acceptNewClient(player_count))
 	{
-		Log("client %d has connected to the server\n", player_count + 1);
-		initializePlayer(player_count);
+		initializePlayer(player_count++);
 		sendInitialPacket(player_count);
 		sendNewPlayerPacket(player_count);
+		Log("client %d has connected to the server\n", player_count);
 	}
 }
 
@@ -74,6 +77,22 @@ void ServerGame::receiveFromClients()
 			}
 		}
 	}
+}
+
+
+void ServerGame::restartGame()
+{
+	game_started = false;
+	ready_player_count = alive_player_count = 0;
+	memset(board, 0, sizeof(board[0][0]) * MAX_X * MAX_Y); // clear the board
+
+	for (int id = 0; id < player_count; id++)
+	{
+		initializePlayer(id);
+	}
+
+	sendRestartPacket();
+	Log("game has been restarted\n");
 }
 
 
@@ -122,6 +141,7 @@ void ServerGame::movePlayers()
 			continue;
 		}
 
+		alive_player_count--;
 		players[id].is_alive = false;
 		Log("client %d was killed at %d, %d\n", id + 1, players[id].position.x, players[id].position.y);
 	}
@@ -146,7 +166,7 @@ void ServerGame::handleReadyPacket(unsigned char id)
 
 	Log("client %d changed state to %s\n", id + 1, players[id].is_ready ? "ready" : "not ready");
 
-	if (ready_player_count == player_count)
+	if (player_count > 1 && ready_player_count == player_count)
 	{
 		game_started = true;
 		Log("All clients are ready, starting the game\n");
@@ -197,7 +217,7 @@ void ServerGame::initializePlayer(unsigned char id)
 
 	players[id] = p;
 	board[x][y] = true;
-	player_count++;
+	alive_player_count++;
 }
 
 
@@ -209,6 +229,20 @@ void ServerGame::sendTickPacket() const
 	Packet packet;
 	packet.packet_type = TICK_PACKET;
 	createPacketWithPositions(0, packet.data);
+
+	packet.serialize(packet_data);
+	network->sendToAll(packet_data, packet_size);
+}
+
+
+void ServerGame::sendRestartPacket() const
+{
+	const unsigned int packet_size = sizeof(Packet);
+	char packet_data[packet_size];
+
+	Packet packet;
+	packet.packet_type = RESTART_PACKET;
+	createRestartPacket(packet.data);
 
 	packet.serialize(packet_data);
 	network->sendToAll(packet_data, packet_size);
@@ -243,13 +277,32 @@ void ServerGame::sendNewPlayerPacket(unsigned char id) const
 }
 
 
+void ServerGame::createRestartPacket(char packet_data[]) const
+{
+	int index = 0;
+
+	// store data about each player's position
+	for (unsigned int i = 0; i < player_count; i++)
+	{
+		packet_data[index++] = players[i].id;
+		packet_data[index++] = players[i].position.x;
+		packet_data[index++] = players[i].position.y;
+	}
+
+	// add two -1s at the end for easier parsing on client side
+	packet_data[index + 1] = packet_data[index] = -1;
+
+	LogInDebugOnly("Created restart packet: %s\n", packet_data);
+}
+
+
 void ServerGame::createPacketWithPositions(unsigned char id, char packet_data[]) const
 {
 	int index = 0;
 
 	packet_data[index++] = id; // first bit -> player's id
 
-	// store data about every player's position
+	// store data about each player's position
 	for (unsigned int i = 0; i < player_count; i++)
 	{
 		packet_data[index++] = players[i].id;
