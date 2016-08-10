@@ -3,6 +3,8 @@
 #include "Drawing.h"
 #include "DirectionEnum.h"
 
+char *ip = "192.168.0.1";
+char *port = "27015";
 ClientGame *client;
 TileTypeEnum board[MAX_X][MAX_Y];
 
@@ -25,8 +27,6 @@ void RestartGame(HWND hWnd)
 	// clear the board array
 	memset(board, 0, sizeof(board[0][0]) * MAX_X * MAX_Y);
 
-	char *ip = "169.254.123.56";
-	char *port = "27015";
 	client = new ClientGame(ip, port, hWnd);
 }
 
@@ -97,6 +97,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, INT nShowCmd)
 {
+	if (__argc > 1) ip = __argv[1];
+	if (__argc > 2) port = __argv[2];
+
 	MSG msg;
 	client = nullptr;
 
