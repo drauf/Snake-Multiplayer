@@ -6,6 +6,7 @@
 ClientGame::ClientGame(char *ip, char *port, HWND hWnd)
 {
 	this->hWnd = hWnd;
+	tiles = 0;
 	network = new ClientNetwork(ip, port);
 }
 
@@ -43,7 +44,7 @@ void ClientGame::sendActionPacket(DirectionEnum direction) const
 }
 
 
-void ClientGame::update(TileTypeEnum board[MAX_X][MAX_Y])
+void ClientGame::update(Tile board[MAX_X * MAX_Y])
 {
 	Packet packet;
 	int data_length = network->receivePackets(network_data);
@@ -78,12 +79,12 @@ void ClientGame::update(TileTypeEnum board[MAX_X][MAX_Y])
 		}
 	}
 
-	InvalidateRect(hWnd, nullptr, TRUE);
+	InvalidateRect(hWnd, nullptr, FALSE);
 	UpdateWindow(hWnd);
 }
 
 
-void ClientGame::handleInitPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y])
+void ClientGame::handleInitPacket(char data[], Tile board[MAX_X * MAX_Y])
 {
 	int index = 0;
 	client_id = data[index++];
@@ -93,20 +94,14 @@ void ClientGame::handleInitPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y])
 		char id = data[index++];
 		char x = data[index++];
 		char y = data[index++];
+		auto type = (id == client_id) ? CURRENT_PLAYER : ANOTHER_PLAYER;
 
-		if (id == client_id)
-		{
-			board[x][y] = CURRENT_PLAYER;
-		}
-		else
-		{
-			board[x][y] = ANOTHER_PLAYER;
-		}
+		board[tiles++] = Tile(x, y, type);
 	}
 }
 
 
-void ClientGame::handleTickPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]) const
+void ClientGame::handleTickPacket(char data[], Tile board[MAX_X * MAX_Y])
 {
 	int index = 1;
 
@@ -115,46 +110,34 @@ void ClientGame::handleTickPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y])
 		char id = data[index++];
 		char x = data[index++];
 		char y = data[index++];
+		auto type = (id == client_id) ? CURRENT_PLAYER : ANOTHER_PLAYER;
 
-		if (id == client_id)
-		{
-			board[x][y] = CURRENT_PLAYER;
-		}
-		else
-		{
-			board[x][y] = ANOTHER_PLAYER;
-		}
+		board[tiles++] = Tile(x, y, type);
 	}
 }
 
 
-void ClientGame::handleRestartPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]) const
+void ClientGame::handleRestartPacket(char data[], Tile board[MAX_X * MAX_Y])
 {
-	int index = 0;
-	memset(board, 0, sizeof(board[0][0]) * MAX_X * MAX_Y); // clear the board
+	int index = tiles = 0;
+	memset(board, 0, sizeof(board[0]) * MAX_X * MAX_Y); // clear the board
 
 	while (data[index] != -1)
 	{
 		char id = data[index++];
 		char x = data[index++];
 		char y = data[index++];
+		auto type = (id == client_id) ? CURRENT_PLAYER : ANOTHER_PLAYER;
 
-		if (id == client_id)
-		{
-			board[x][y] = CURRENT_PLAYER;
-		}
-		else
-		{
-			board[x][y] = ANOTHER_PLAYER;
-		}
+		board[tiles++] = Tile(x, y, type);
 	}
 }
 
 
-void ClientGame::handleNewPlayerPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]) const
+void ClientGame::handleNewPlayerPacket(char data[], Tile board[MAX_X * MAX_Y])
 {
 	char x = data[0];
 	char y = data[1];
 
-	board[x][y] = ANOTHER_PLAYER;
+	board[tiles++] = Tile(x, y, ANOTHER_PLAYER);
 }

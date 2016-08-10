@@ -8,6 +8,7 @@
 class ClientGame
 {
 	HWND hWnd;
+	unsigned int tiles;
 	unsigned int client_id;
 	ClientNetwork* network;
 	char network_data[MAX_PACKET_SIZE]; // data buffer
@@ -18,11 +19,11 @@ public:
 
 	void sendReadyPacket() const;
 	void sendActionPacket(DirectionEnum direction) const;
-	void update(TileTypeEnum board[MAX_X][MAX_Y]);
+	void update(Tile board[MAX_X * MAX_Y]);
 
 private:
-	void handleInitPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]);
-	void handleTickPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]) const;
-	void handleRestartPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]) const;
-	void handleNewPlayerPacket(char data[], TileTypeEnum board[MAX_X][MAX_Y]) const;
+	void handleInitPacket(char data[], Tile board[MAX_X * MAX_Y]);
+	void handleTickPacket(char data[], Tile board[MAX_X * MAX_Y]);
+	void handleRestartPacket(char data[], Tile board[MAX_X * MAX_Y]);
+	void handleNewPlayerPacket(char data[], Tile board[MAX_X * MAX_Y]);
 };

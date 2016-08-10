@@ -6,7 +6,7 @@
 char *ip = "192.168.0.1";
 char *port = "27015";
 ClientGame *client;
-TileTypeEnum board[MAX_X][MAX_Y];
+Tile board[MAX_X * MAX_Y];
 
 
 void __cdecl connectionThread(void *args)
@@ -25,7 +25,7 @@ void RestartGame(HWND hWnd)
 {
 	Drawing::RedrawWindow(hWnd, board);
 	// clear the board array
-	memset(board, 0, sizeof(board[0][0]) * MAX_X * MAX_Y);
+	memset(board, 0, sizeof(board[0]) * MAX_X * MAX_Y);
 
 	client = new ClientGame(ip, port, hWnd);
 }

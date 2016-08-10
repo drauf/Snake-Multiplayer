@@ -46,7 +46,7 @@ void Drawing::DrawStatus(HWND hWnd, std::string status)
 }
 
 
-void Drawing::RedrawWindow(HWND hWnd, TileTypeEnum board[MAX_X][MAX_Y])
+void Drawing::RedrawWindow(HWND hWnd, Tile board[MAX_X * MAX_Y])
 {
 	PAINTSTRUCT PaintStruct;
 	HDC hdc = BeginPaint(hWnd, &PaintStruct);
@@ -56,25 +56,20 @@ void Drawing::RedrawWindow(HWND hWnd, TileTypeEnum board[MAX_X][MAX_Y])
 	FillRect(hdc, &clientArea, clearBrush);
 	FillRect(hdc, &gameArea, backgroundBrush);
 
-	static RECT drawPos;;
-	for (int x = 0; x < MAX_X; x++)
+	static RECT drawPos;
+	for (auto index = 0; index < MAX_X * MAX_Y; index++)
 	{
-		for (int y = 0; y < MAX_Y; y++)
-		{
-			if (board[x][y] != EMPTY)
-			{
-				drawPos.top = (y + 2)*TILESIZE + 22;
-				drawPos.bottom = drawPos.top + TILESIZE - 1;
-				drawPos.left = x*TILESIZE + 11;
-				drawPos.right = drawPos.left + TILESIZE - 1;
+		if (board[index].type == EMPTY) break;
 
-				if (board[x][y] == CURRENT_PLAYER) {
-					FillRect(hdc, &drawPos, currentPlayersBrush);
-				} else { // ANOTHER_PLAYER
-					FillRect(hdc, &drawPos, otherPlayersBrush);
-				}
-			}
-		}
+		auto x = board[index].x;
+		auto y = board[index].y;
+
+		drawPos.top = (y + 2)*TILESIZE + 22;
+		drawPos.bottom = drawPos.top + TILESIZE - 1;
+		drawPos.left = x*TILESIZE + 11;
+		drawPos.right = drawPos.left + TILESIZE - 1;
+
+		FillRect(hdc, &drawPos, (board[index].type == CURRENT_PLAYER) ? currentPlayersBrush : otherPlayersBrush);
 	}
 
 	EndPaint(hWnd, &PaintStruct);

@@ -1,7 +1,7 @@
 #pragma once
 #include <windows.h>
 #include <string>
-#include "TileTypeEnum.h"
+#include "Tile.h"
 
 
 // window size in pixels
@@ -32,5 +32,5 @@ class Drawing
 public:
 	static void Init(HWND hWnd);
 	static void DrawStatus(HWND hWnd, std::string status);
-	static void RedrawWindow(HWND hWnd, TileTypeEnum board[MAX_X][MAX_Y]);
+	static void RedrawWindow(HWND hWnd, Tile board[MAX_X * MAX_Y]);
 };

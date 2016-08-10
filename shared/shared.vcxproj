@@ -134,7 +134,7 @@
     <ClInclude Include="Networking.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="Logger.h" />
-    <ClInclude Include="TileTypeEnum.h" />
+    <ClInclude Include="Tile.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Networking.cpp" />
