@@ -17,6 +17,7 @@ class ServerGame
 	bool game_started;
 	unsigned int player_count;
 	unsigned int ready_player_count;
+	unsigned int alive_player_count;
 	char network_data[MAX_PACKET_SIZE]; // data buffer
 
 	Player players[MAX_PLAYERS];

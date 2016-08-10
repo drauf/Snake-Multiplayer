@@ -6,6 +6,7 @@ ServerGame::ServerGame(char *port)
 	game_started = false;
 	player_count = 0;
 	ready_player_count = 0;
+	alive_player_count = 0;
 	network = new ServerNetwork(port);
 }
 
@@ -17,6 +18,8 @@ ServerGame::~ServerGame()
 
 void ServerGame::gameTick()
 {
+	if (alive_player_count < 2) return; // todo: implement restartGame()
+
 	if (!game_started) return;
 
 	movePlayers();
@@ -122,6 +125,7 @@ void ServerGame::movePlayers()
 			continue;
 		}
 
+		alive_player_count--;
 		players[id].is_alive = false;
 		Log("client %d was killed at %d, %d\n", id + 1, players[id].position.x, players[id].position.y);
 	}
@@ -198,6 +202,7 @@ void ServerGame::initializePlayer(unsigned char id)
 	players[id] = p;
 	board[x][y] = true;
 	player_count++;
+	alive_player_count++;
 }
 
 
