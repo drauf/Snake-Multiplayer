@@ -51,10 +51,16 @@ void Drawing::RedrawWindow(HWND hWnd, Tile board[MAX_X * MAX_Y])
 	PAINTSTRUCT PaintStruct;
 	HDC hdc = BeginPaint(hWnd, &PaintStruct);
 
+	// setup offscreen DC
+	auto hdcBuffer = CreateCompatibleDC(hdc);
+	auto hBitmapBuffer = CreateCompatibleBitmap(hdc, WINDOWSIZE_X, WINDOWSIZE_Y);
+	SelectObject(hdcBuffer, hBitmapBuffer);
+
+	// draw to the offscreen DC
 	static RECT clientArea;
 	GetClientRect(hWnd, &clientArea);
-	FillRect(hdc, &clientArea, clearBrush);
-	FillRect(hdc, &gameArea, backgroundBrush);
+	FillRect(hdcBuffer, &clientArea, clearBrush);
+	FillRect(hdcBuffer, &gameArea, backgroundBrush);
 
 	static RECT drawPos;
 	for (auto index = 0; index < MAX_X * MAX_Y; index++)
@@ -69,8 +75,12 @@ void Drawing::RedrawWindow(HWND hWnd, Tile board[MAX_X * MAX_Y])
 		drawPos.left = x*TILESIZE + 11;
 		drawPos.right = drawPos.left + TILESIZE - 1;
 
-		FillRect(hdc, &drawPos, (board[index].type == CURRENT_PLAYER) ? currentPlayersBrush : otherPlayersBrush);
+		FillRect(hdcBuffer, &drawPos, (board[index].type == CURRENT_PLAYER) ? currentPlayersBrush : otherPlayersBrush);
 	}
 
+	// copy the content of offscreen DC to actual screen DC and free memory
+	BitBlt(hdc, 0, 0, WINDOWSIZE_X, WINDOWSIZE_Y, hdcBuffer, 0, 0, SRCCOPY);
+	DeleteDC(hdcBuffer);
+	DeleteObject(hBitmapBuffer);
 	EndPaint(hWnd, &PaintStruct);
 }
